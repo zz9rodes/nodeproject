@@ -32,13 +32,15 @@ export default{
        
     }
     const send_commentaire=(ev)=>{
-        ev.preventDefault()
+        // ev.preventDefault()
         axios.post('http://localhost:3001/commentaire',{
             id_annonce:Id,
             description:description.value,
         },{withCredentials:true}
         ) .then(response=>{console.log(response) 
-            alert(response.data.message)}, (err) => console.log(err.response)) 
+            alert(response.data.message) ,
+            location.reload()
+          }, (err) => console.log(err.response)) 
     }
 
     const Postuler=(ev)=>{
@@ -51,7 +53,9 @@ export default{
     }
 
     const list_commentaires = ()=> {
-        axios.get('http://localhost:3001/List_commentaire',{withCredentials:true})
+        axios.post('http://localhost:3001/List_commentaire',{
+          id_annonce:Id,
+        },{withCredentials:true})
             .then(response=>{
             console.log(response)
           commentaires.value=response.data.message
@@ -61,8 +65,6 @@ export default{
             if (err.response && err.response.data) {
 
             console.log(err.response.data)
-            // alert("vous devez vous connecter")
-            // this.$router.push('/connexion')
             } else {
 
             console.log(err)
@@ -142,7 +144,8 @@ export default{
                         <p id="budget" style="opacity: 1;" class="pair padd">  <h3><span style="font-size:18px ;"> Remuneration :</span> {{$route.query.budget}} Fcfa</h3> </p>
                         <p id="date" class="imp padd">  a ete envoyer le : <h3>{{$route.query.date}}</h3>  </p>
                         <div id="comment">
-                          <span > <input id="commentaire"  type="text"  style="" v-model="description">  <input type="submit" @click="send_commentaire" value="envoyer"></span>
+                       
+                          <span > <input class="commentaires"  type="text"  style="" v-model="description" placeholder="">  <input type="submit" @click="send_commentaire" value="envoyer"></span>
                         </div> 
 
                         <p><span id='look_comment' v-if="look" @click="look_comment" style="cursor: pointer; color: blue;">voir les commentaires</span>
@@ -153,6 +156,15 @@ export default{
                               <br>
                                <div class="list_comment" v-for="commentaire in commentaires"> 
 
+                                <div class="commentaire">
+                                  <h3><span id="psuedo">#{{ commentaire.pseudo }}</span></h3>
+                                  
+                                  <p >
+                                    <span id="desc">
+                                    {{ commentaire.description }}
+                                  </span>
+                                  </p>
+                                </div>
 
                                </div>
                             </section>
@@ -180,6 +192,7 @@ export default{
 </template>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Text&display=swap');
 #domaine{
     margin-bottom: 20px;
     margin-left: 100px;
@@ -261,7 +274,7 @@ export default{
     }
     #comment{
     /* background-color: #9EC8DE; */
-    margin-left: 180px;
+    margin-left: 10px;
     display: flex;
 }
 input[type="submit"]{
@@ -284,9 +297,9 @@ input[type="submit"]:active{
   color: blue;
   transform: rotate(45deg);
 }
-#commentaire{
+.commentaires{
     width: 300px;
-    /* margin-left:180px; */
+    border: solid rgb(84, 125, 138); 
     height: 50px;
     font-size: 24px;
 }
@@ -386,5 +399,15 @@ input[type="submit"]:active{
 #coeur{
     margin-left: 80%;
 }
-
+.commentaire:nth-child(even){
+  background-color: rgb(15, 74, 122);
+  border-radius: 5px;
+}
+#desc{
+  margin-left: 100px;
+  font-family: 'Crimson Text', serif;
+}
+.warning{
+  font-size: 10px;
+}
 </style>

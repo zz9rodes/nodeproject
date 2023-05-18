@@ -12,13 +12,13 @@ import Profil from './components/Profil.vue'
 
 <template>
     <div >
-      <router-link to="/connexion">inscription</router-link>
+      <!-- <router-link to="/connexion">inscription</router-link> -->
       
-        <header>
+        <header style="margin: 0; padding: 0;">
           <NavBar/>
         </header>
     </div>
-    <main>
+    
        
 
       <div class="section" id="centre"> 
@@ -28,12 +28,12 @@ import Profil from './components/Profil.vue'
      
       </div>
 
-      <div class="section" id="droite">
+      <!-- <div class="section" id="droite">
         
           <Profil/>
-        </div>
+        </div> -->
 
-    </main> 
+   
     <Footer/>
    
 
@@ -45,32 +45,19 @@ import Profil from './components/Profil.vue'
 </template> 
 
 <style scoped>
-.menu{
-  margin-left: 10px;
+header{
+/* height: 300px; */
 }
 
-main{
-  display: flex;
-  flex-direction:row ;
-}
-.section{
-  margin-top: 80px;
-  width: 100%;
-  height: 100%;
-  border-radius: 4px;
-}
+
+
 
 #centre{
-  background-color: rgb(255, 255, 255);
-  margin-left: 10px;
-  margin-right: 10px;
-  flex: 3;
-  height: 1000px;
-   
-  }
-  #droite{
-    flex: 1;
-  }
+
+  background-color: rgb(150, 51, 51);
+  height: 200%;
+}
+  
 
 
 </style>

@@ -171,7 +171,7 @@ app.post('/Annonce',(req,res)=>{
 		else{
 			try{
 				if(req.cookies && req.cookies.email){
-				conn.query (`insert into annonce(titre,desription,domaine,budget,date,email_personne) values("${titre}", "${description}", "${domaine}", "${budget}","${date}","${req.cookies.email}")`);
+				conn.query (`insert into annonces(titre,desription,domaine,budget,date,email_personne) values("${titre}", "${description}", "${domaine}", "${budget}","${date}","${req.cookies.email}")`);
 				console.log("l'ajout a bien ete effectuer !:) ")
 				res.send({message:"votre annonce a bien ete cree ",statut:true}) 
 			}
@@ -195,7 +195,7 @@ app.get('/List_Annonce',auth,(req,res)=>{
 		}
 		else{
 			try{
-					conn.query(`select * from annonce `,(erreur,resultat)=>{
+					conn.query(`select * from annonces `,(erreur,resultat)=>{
 						if(erreur){
 							console.log('erreur de connexion');
 							res.status(422).send({message:"erreur de connexion",status:false})
@@ -211,7 +211,7 @@ app.get('/List_Annonce',auth,(req,res)=>{
 										titre: resultat[i].Titre,
 										description: resultat[i].Desription,
 										budget: resultat[i].Budget,
-										date: resultat[i].date,
+										date:(resultat[i].date).substring(0,25),
 										domaine: resultat[i].domaine
 									}
 									tableau.push(annonce);
@@ -280,12 +280,14 @@ app.post('/postuler',(req,res)=>{
 	})
 	
 })
+
+
 app.post('/commentaire',(req,res)=>{
 	var id_annonce=req.body.id_annonce;
 	var description=req.body.description;
 	var currentDate=new Date();
 	var date=currentDate.toString();
-	console.log(description,id_annonce)
+	
 	
 	req.getConnection((erro,conn)=>{
 		if(erro){
@@ -293,24 +295,38 @@ app.post('/commentaire',(req,res)=>{
 			res.send({message:"desole un probleme est survenu en haut",statut:false})
 		}
 		else{
-			var email=req.cookies.pseudo;
-					
 
-			try{
-					if(req.cookies && req.cookies.email&&req.cookies.pseudo){
-					conn.query (`insert into commentaire(id_Annonce,email_personne,pseudo_personne,dates,description) values("${id_annonce}", "${req.cookies.email}", "${req.cookies.pseudo}","${date}","${description}")`);
-					console.log("l'ajout a bien ete effectuer !:) ")
-					res.send({message:`votre commentaire a bien ete envoyer !`,statut:true}) 
-				}
-				}catch(erro){			
-							res.send({message:"desole un probleme est survenu  veillez recommencer plutard ",statut:false})
-			}
-					
-				
-
-				
-				
+			conn.query(`select * from commentaire where id_annonce=${id_annonce} and email_personne='${req.cookies.email}'`,(erreur,resultat)=>{
+				if(erreur){
+					console.log(erreur)
+				}else{
+					if(resultat.length>0){
+						console.log("deja enregistrer")
+						res.send({message:"desoler vous n'avez droit qu'a un quel commentaire  ",statut:false})
+					}
+					else{
+						var email=req.cookies.pseudo;
+								
 			
+						try{
+								if(req.cookies && req.cookies.email&&req.cookies.pseudo){
+								conn.query (`insert into commentaire(id_Annonce,email_personne,pseudo_personne,dates,description) values("${id_annonce}", "${req.cookies.email}", "${req.cookies.pseudo}","${date}","${description}")`);
+								// res.cookie('ID_ANNONCE',id_annonce,{maxAge:dates,sameSite:'None',secure:true,httpOnly:true})
+								// res.cookie('email',email,{maxAge:date,sameSite:'None',secure:true,httpOnly:true})
+								console.log("l'ajout a bien ete effectuer !:) ")
+								res.send({message:`votre commentaire a bien ete envoyer !`,statut:true}) 
+							}
+							}catch(erro){	
+										console.log(erro.message)		
+										res.send({message:"desole un probleme est survenu  veillez recommencer plutard ",statut:false})
+						}
+								
+					}
+				}
+
+				
+				
+			})
 			
 		  	
 		}
@@ -318,15 +334,15 @@ app.post('/commentaire',(req,res)=>{
 	
 })
 
-app.get('/List_commentaire',(req,res)=>{
-
+app.post('/List_commentaire',(req,res)=>{
+	var id_Annonce=req.body.id_annonce;
 	req.getConnection((erro,conn)=>{
 		if(erro){
 			console.log("erreur d'envoi de requette")
 		}
 		else{
 			try{
-					conn.query(`select * from commentaire  `,(erreur,resultat)=>{
+					conn.query(`select * from commentaire where id_annonce="${id_Annonce}" `,(erreur,resultat)=>{
 						if(erreur){
 							console.log('erreur de connexion');
 							res.status(422).send({message:"erreur de connexion",status:false})
@@ -353,6 +369,7 @@ app.get('/List_commentaire',(req,res)=>{
 								
 						} else {
 								res.status(422).send({diver:"aucun commentaire soyez le premier a commenterr",status:false})
+								console.log(id_Annonce);
 							}
 						}
 					});
@@ -361,6 +378,101 @@ app.get('/List_commentaire',(req,res)=>{
 			}
 		}
 	})
+	
+
+})
+
+app.get('/list_Query',(req,res)=>{
+	
+	req.getConnection((erro,conn)=>{
+		if(erro){
+			console.log("erreur d'envoi de requette")
+		}
+		else{
+			try{
+				conn.query(`SELECT * FROM annonces INNER JOIN postuler ON annonces.id=postuler.id_Annonce and postuler.email_Personne="${req.cookies.email}"`,(erreur,resultat)=>{
+				if(erreur){
+						console.log('erreur de connexion');
+						res.status(422).send({message:"erreur de connexion",status:false})
+				}
+				else{
+					if(resultat.length>0){
+					let tableau=new Array();
+						let demande;
+							for(var i=0;i<resultat.length;i++){
+							
+								demande={		
+								id:resultat[i].id,				
+								titre:resultat[i].Titre,
+								budget:resultat[i].Budget,
+								description:resultat[i].Desription,
+								date:(resultat[i].dates).substring(0,25),
+								email:resultat[i].email_Personne,
+								domaine:resultat[i].domaine,
+								
+								}
+							tableau.push(demande);
+						}
+							console.log('les demandes')
+							console.log(tableau)
+							res.status(200).send({message:tableau,diver:"tout vos demandes ici ",status:true})
+						} else {
+							res.status(422).send({diver:"vous n'avez postuler pour aucune annonces",status:false})
+						}
+					}
+				});
+			}catch(erro){
+			console.log(erro);
+		}
+	}
+})
+	
+
+})
+app.get('/list_My_annoce',(req,res)=>{
+	
+	req.getConnection((erro,conn)=>{
+		if(erro){
+			console.log("erreur d'envoi de requette")
+		}
+		else{
+			try{
+				conn.query(`SELECT * FROM annonces  where annonce.email_Personne="${req.cookies.email}"`,(erreur,resultat)=>{
+				if(erreur){
+						console.log('erreur de connexion');
+						res.status(422).send({message:"erreur de connexion",status:false})
+				}
+				else{
+					if(resultat.length>0){
+					let tableau=new Array();
+						let demande;
+							for(var i=0;i<resultat.length;i++){
+							
+								demande={		
+								id:resultat[i].id,				
+								titre:resultat[i].Titre,
+								budget:resultat[i].Budget,
+								description:resultat[i].Desription,
+								date:(resultat[i].dates).substring(0,25),
+								email:resultat[i].email_Personne,
+								domaine:resultat[i].domaine,
+								
+								}
+							tableau.push(demande);
+						}
+							console.log('les demandes')
+							console.log(tableau)
+							res.status(200).send({message:tableau,diver:"tout vos demandes ici ",status:true})
+						} else {
+							res.status(422).send({diver:"vous n'avez postuler pour aucune annonces",status:false})
+						}
+					}
+				});
+			}catch(erro){
+			console.log(erro);
+		}
+	}
+})
 	
 
 })

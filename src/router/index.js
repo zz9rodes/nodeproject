@@ -25,8 +25,14 @@ const router = createRouter({
       path:'/list_annonce',
       name:'list_annonce',
       component:()=>import('../views/List_annonce.vue'),
-      props:true
+      // props:true
 
+    },
+    {
+      path:'/list_query',
+      name:'list_query',
+      component:()=>import('../views/Show_query.vue'),
+    
     },
     {
       path:'/postuler',
@@ -43,6 +49,11 @@ const router = createRouter({
       name:'inscription',
       component:()=>import('../views/Inscription.vue')
     },
+    {
+      path:'/list_my_annonce',
+      name:'list_my_annoncce',
+      component:()=>import('../views/My_Annonce.vue')
+    }
   ]
 })
 

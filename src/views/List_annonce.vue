@@ -3,20 +3,9 @@ import {ref} from 'vue'
 import axios from 'axios'
 import { RouterLink, RouterView } from 'vue-router'
 export default{
-    setup(){
-     
-        const modifier=()=>{
-            var profilPic=document.getElementById('photo');
-            var input =document.getElementById('update');
-            profilPic.src=URL.createObjectURL(input.files[0]);
-        }
-         
-    
-    var annonces=ref([]);
-
-   
-   
-    const Se_Connecter = ()=> {
+    setup(){     
+     var annonces=ref([]);
+      const Se_Connecter = ()=> {
         axios.get('http://localhost:3001/List_annonce',{withCredentials:true})
             .then(response=>{
             console.log(response)
@@ -25,23 +14,16 @@ export default{
         } , 
         (err) => {
             if (err.response && err.response.data) {
-
-            console.log(err.response.data)
+              console.log(err.response.data)
             alert("vous devez vous connecter")
-            this.$router.push('/connexion')
             } else {
-
-            console.log(err)
-            
+              console.log(err)
             }
         }) 
         console.log(annonces.value);
-        
-
-    }
+  }
     Se_Connecter()
     return {
-        modifier,
         annonces,
         nombres:[{nombre:"1"},{nombre:"2"},{nombre:"3"}],
         
@@ -66,7 +48,7 @@ export default{
         
         <section id="section">
             <div v-for="annonce in annonces" id="annonces">
-                <div id="annonce">
+                <div class="annonce">
                     <RouterLink :to="'/postuler?title=' + annonce.titre+'&id='+annonce.id+'&description='+annonce.description+'&budget='+annonce.budget+'&date='+annonce.date+'&domaine='+annonce.domaine" style="text-decoration: none;">
                   
                         <div class="rows"> 
@@ -132,13 +114,7 @@ export default{
 #update{
     display: none;
 }
-#amis{
-    width: 100%;
-    height: 80%;
-    background-color: rgb(220, 233, 235);
-    border-radius: 17px;
-    margin-top: 200px;
-}
+
 *{
     font-family: 'Changa', sans-serif;
     font-size: 100%;
@@ -146,16 +122,6 @@ export default{
 }
 
 
-template{
-    background-color: turquoise;
-}
-
-
-#doc{
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-}
 #domaine{
     margin-bottom: 20px;
 }
@@ -167,7 +133,7 @@ template{
     flex-direction: row;
     width: 100%;
 } 
-#annonce{
+.annonce{
     transition: 0.8s;
     transform: scale(0.9);
     border-bottom-right-radius: none;
@@ -178,6 +144,7 @@ template{
     border-bottom: solid black;
     width: 100%;
     }
+
 
 
 #link{
@@ -199,7 +166,7 @@ template{
     margin-bottom: 50px;
     font-size: 17px;
     background-color: rgb(143, 143, 138);
-    width: 80%;
+    /* width: 100%; */
     height: auto;
 }
 #budget{

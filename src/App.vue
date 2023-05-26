@@ -14,7 +14,7 @@ import Profil from './components/Profil.vue'
   <html>
     <body>
       <div id="content">
-        <router-link to="/list_proposition">inscription</router-link>
+        <!-- <router-link to="/list_proposition">inscription</router-link> -->
       
           <header style="margin: 0; padding: 0;">
               <NavBar/>

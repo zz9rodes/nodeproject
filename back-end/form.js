@@ -415,6 +415,7 @@ app.get('/list_Query',auth,(req,res)=>{
 					if(resultat.length>0){
 					let tableau=new Array();
 						let demande;
+						console.log("les resulta ici"+resultat)
 							for(var i=0;i<resultat.length;i++){
 							
 								demande={		
@@ -430,8 +431,8 @@ app.get('/list_Query',auth,(req,res)=>{
 								}
 							tableau.push(demande);
 						}
-							console.log('les demandes')
-							console.log(tableau)
+							// console.log('les demandess et le bug')
+							// console.log(tableau)
 							res.status(200).send({message:tableau,diver:"tout vos demandes ici ",status:true})
 						} else {
 							res.status(422).send({diver:"vous n'avez postuler pour aucune annonces",status:false})
@@ -478,8 +479,8 @@ app.get('/list_My_annoce',auth,(req,res)=>{
 								}
 							tableau.push(demande);
 						}
-							console.log('les demandes')
-							console.log(tableau)
+							// console.log('les demandes')
+							// console.log(tableau)
 							res.status(200).send({message:tableau,diver:"tout vos demandes ici ",status:true})
 						} else {
 							res.status(422).send({diver:"vous n'avez postuler pour aucune annonces",status:false})
@@ -525,7 +526,7 @@ app.post ('/list_proposition',auth,(req,res)=>{
 							console.log(tableau)
 							res.status(200).send({message:tableau,diver:"toutes les demande d'emplois ici",status:true})
 						} else {
-							res.status(422).send({diver:"vous n'avez pas encore de demande pour cette annonce",status:false})
+							res.send({diver:"vous n'avez pas encore de demande pour cette annonce",status:false})
 						}
 					}
 				});

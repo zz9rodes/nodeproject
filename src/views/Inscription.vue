@@ -19,7 +19,7 @@ export default {
     return {
     message:'',
     email:'',
-    nom:'',
+    nom:null,
     password:'',
     competence:'',
     numcompte:'',
@@ -65,7 +65,7 @@ export default {
 <template>
     <div>
             
-    <form class="form">
+    <form class="form" @submit="valid">
     <div class="eror">{{ message }} </div>  
     <div class="valid">{{ message_ok }}</div>
        <p class="form-title">Cree un compte</p>
@@ -78,7 +78,7 @@ export default {
           <input placeholder="Enter name" type="text" v-model="nom" required> 
         </div>
         <div class="input-container">
-          <input placeholder="Enter password" type="password" v-model="password" required>
+          <input placeholder="Enter password" type="password" v-model="password" minlength="9" required>
 
           
         </div>
@@ -86,7 +86,7 @@ export default {
           <input placeholder="competence" type="text" v-model="competence" required>
         </div>
         
-         <button class="submit" type="submit" @click="valid">
+         <button class="submit" type="submit" >
         Sign up
       </button>
 

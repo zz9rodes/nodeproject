@@ -48,7 +48,7 @@ import { ref } from 'vue'
 
 <template>
     <div>
-        <form class="form">
+        <form class="form"  @submit="updatePasswork">
        <p class="form-title">send your email</p>
         <div class="input-container">
           <input placeholder="Enter email" type="email" v-model="email" required>
@@ -56,7 +56,7 @@ import { ref } from 'vue'
       
         
         
-         <button class="submit" type="submit" @click="updatePasswork">
+         <button class="submit" type="submit">
        Send
       </button>
 

@@ -94,7 +94,7 @@
 				<li><router-link to="/list_annonce" class="link" style="color: blueviolet;" >actualites</router-link></li>
 				<li><router-link to="/list_my_annonce" class="link"> my Publications</router-link></li>
                 <li><router-link to="/list_query" class="link">my Postulations</router-link></li>
-				<li><router-link to="/list_annonce" class="link">my Propositions</router-link></li>
+				<!-- <li><router-link to="/list_annonce" class="link">my Propositions</router-link></li> -->
 				<!-- <li><router-link to="/list_annonce" class="link">my stats</router-link></li> -->
 				
 				<li class="annonce" @click="myFunction">post</li>
@@ -214,7 +214,7 @@
 				font-size: 20px;
 				height: 40px;
 				cursor: pointer;
-				
+				margin-left: 200px;
 			}
 			.deconect{
 				padding: 5px;
@@ -226,6 +226,7 @@
 				border-radius: 4px;
 				cursor: pointer;
 				margin-left: 100px;
+				margin-top: -3s0px;
 			}
 			.deconect:active,.annonce:active{
 				background-color: #f0eef3;

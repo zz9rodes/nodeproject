@@ -1,0 +1,8 @@
+/*comment push dans un espositoire deja existant*/
+
+-git add .
+-git commit -m "mot cles"
+-git push origin:"nom_branche"
+
+/* cree un repositoire et push*/
+-

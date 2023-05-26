@@ -57,41 +57,51 @@ app.post('/inscription',(req,res)=>{
 	var numcompte=req.body.numcompte;
 	var hashedPassword='6qwertyu';
 	
-
-	req.getConnection((erro,conn)=>{
-		if(erro){
-			console.log("erreur d'envoi de requette")
+	if(email!="" && nom!="" && passe!="" && competence!=""&& passe.length>8){
+		if(email.includes('@')==true && email.includes('.com')==true){
+			req.getConnection((erro,conn)=>{
+			if(erro){
+				console.log("erreur d'envoi de requette")
+			}
+			else{
+				try{
+					conn.query(`select email from personne where email="${email}" `,(erreur,resultat)=>{
+						if(erreur){
+							console.log('erreur de connexion');
+							res.status(422).send({message:"erreur de connexion",status:false})
+						}else{
+							if(resultat.length>0){
+								console.log('cette utilisateur existe deja !');
+								res.status(220).send({message:"l'email que vous utiliser existe deja  ",status:false})
+							}
+							else{		
+								hashedPassword=md5(passe) 
+								console.log("emal" +email+" nom "+nom+" passe"+hashedPassword)
+								conn.query (`insert into personne(email,nom,passe,competence) values("${email}", "${nom}", "${hashedPassword}", "${competence}")`);
+								console.log("good jobs ")
+								res.status(200).send({message:"votre compte a ete cree avec succes",status:true})
+							}
+						}
+	
+					});
+						
+						
+						
+						
+					}catch(erro){
+					console.log(erro);
+				}
+			}
+			})
 		}
 		else{
-			try{
-				conn.query(`select email from personne where email="${email}" `,(erreur,resultat)=>{
-					if(erreur){
-						console.log('erreur de connexion');
-						res.status(422).send({message:"erreur de connexion",status:false})
-					}else{
-						if(resultat.length>0){
-							console.log('cette utilisateur existe deja !');
-							res.status(220).send({message:"l'email que vous utiliser existe deja  ",status:false})
-						}
-						else{		
-							hashedPassword=md5(passe) 
-							console.log("emal" +email+" nom "+nom+" passe"+hashedPassword)
-							conn.query (`insert into personne(email,nom,passe,competence) values("${email}", "${nom}", "${hashedPassword}", "${competence}")`);
-							console.log("good jobs ")
-							res.status(200).send({message:"votre compte a ete cree avec succes",status:true})
-						}
-					}
-
-				});
-					
-					
-					
-					
-				}catch(erro){
-				console.log(erro);
-			}
+			res.send({message:"veillez entrer une email valide ",status:false})
 		}
-	})
+	}
+	else{
+		res.send({message:"veillez remplir tous les champs",status:false})
+	}
+	
 	console.log("l'ajout a bien ete effectuer !:) ")
 })
 
@@ -414,6 +424,7 @@ app.get('/list_Query',auth,(req,res)=>{
 								description:resultat[i].Desription,
 								date:(resultat[i].dates).substring(0,25),
 								email:resultat[i].email_Personne,
+								nom:resultat[i].pseudo_personne,
 								domaine:resultat[i].domaine,
 								
 								}

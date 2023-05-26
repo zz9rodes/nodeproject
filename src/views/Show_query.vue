@@ -35,177 +35,97 @@
 </script>
 
 <template>
-    <div>
-     <tableau>
-        <!-- <h3 style="margin-left: 100px; text-decoration:;">ces annonce sont en attentes de reponse</h3> -->
-        <table  cellpadding="5" id="titre">
-            <tr>
-                <td class="titre">Titre</td>
-                <td>Domaine</td>
-                <td>Budget</td>
-                <td>Date</td>
-                <td>Etat</td>
-                <td>supprimer</td>
-                <td>Allez voir</td>
-            </tr> 
-        </table> 
-        <table v-for="Query in Querys" class="annonce" cellpadding="5">   
-     
-            <tr>
-                    <td> {{Query.titre}}</td>
-                    <td>{{Query.domaine}}</td>
-                    <td>{{Query.budget}}</td>
-                    <td>{{Query.date.substring(0.25)}}</td>
-                    <td>
-                     
-                        <div class="loader">
-                            <div class="bar1"></div>
-                            <div class="bar2"></div>
-                            <div class="bar3"></div>
-                            <div class="bar4"></div>
-                            <div class="bar5"></div>
-                            <div class="bar6"></div>
-                            <div class="bar7"></div>
-                            <div class="bar8"></div>
-                            <div class="bar9"></div>
-                            <div class="bar10"></div>
-                            <div class="bar11"></div>
-                            <div class="bar12"></div>
-                        </div> 
-                    </td>    
-                    <td>supprimer</td>
-                    <td>          <RouterLink :to="'/postuler?title=' + Query.titre+'&id='+Query.id+'&description='+Query.description+'&budget='+Query.budget+'&date='+Query.date+'&domaine='+Query.domaine" style="text-decoration: none;">voire</RouterLink></td>
-          
-            </tr>
-        
-        </table>
-     </tableau>
-      
-        
-      
+    <div class="container">  
+      <h1 style="text-align: center; ">your   posts </h1>
+    <ul>  
+      <div  id="ligne">
+          <div class=" titre">titre</div>
+          <div class=" titre"> domaine</div>
+          <div class=" titre"> budget (fCfa)</div>
+          <!-- <div class=" titre"> dates</div> -->
+          <div class=" titre"> auteur</div>
+          <div class=" titre"> suprimer</div>
+      </div>
+         
+        <div v-for="Query in Querys"   class="boucle " id="ligne">
+          <div class="ele">{{Query.titre}} </div>
+          <div class="ele"> {{Query.domaine}}</div>
+          <div class="ele"> {{Query.budget}} Fcfa</div>
+          <!-- <div class="ele"> {{Query.date.substring(0.25)}}</div> -->
+          <div class="ele"> 
+            <RouterLink style="text-decoration: none;" :to="'/postuler?title=' + Query.titre+'&id='+Query.id+'&description='+Query.description+'&budget='+Query.budget+'&date='+Query.date+'&domaine='+Query.domaine" > 
+              @{{ Query.nom }}
+            </RouterLink>
+          </div>
+          <div class="ele">
+                  <svg xmlns="http://www.w3.org/2000/svg"  height="38" viewBox="0 -960 960 960" width="48"><path d="M295.615-160q-22.442 0-38.913-16.471-16.471-16.471-16.471-38.913v-518.462H200v-30.77h154.154v-26.154h251.692v26.154H760v30.77h-40.231v518.462q0 23.057-16.163 39.221Q687.443-160 664.385-160h-368.77ZM689-733.846H271v518.462q0 10.769 7.308 17.692 7.307 6.923 17.307 6.923h368.77q9.231 0 16.923-7.692Q689-206.154 689-215.384v-518.462ZM395.461-273.692h30.77v-378.231h-30.77v378.231Zm138.308 0h30.77v-378.231h-30.77v378.231ZM271-733.846v543.077-543.077Z"/></svg>
+          </div>
+        </div>
+    </ul>
     </div>
 </template>
 
 <style scoped>
-td{
-    width: 140px;
+  *{
+  font-family:'Lucida Sans Regular', 'Lucida Grande', Geneva, Verdana;
 
 }
-table{
-   
-    border-collapse: collapse;
-    border-radius: 2px;
+.titre{
+  /* background-color: rgb(130, 136, 135); */
+  height: 40px;
+  font-size:  24px;
+  /* border: solid rgb(184, 184, 175) 1px; */
 }
-.annonce:nth-child(even) {
-  background-color:#D0D8DD;
+.dem-link{
+  width: 200px;
 }
-.annonce:nth-child(odd) {
-  background-color:#7DBCC2;
-}
-table, td {
-  /* border: 1px solid black; */
- 
-}
-#titre{
-   background-color: #516BEC;
-   border-bottom: 2px solid black;
-   height: 70px;
-   font-size: 23px ;
-}
-tableau{
-    border-radius: 6px;
-}
+.container{
+  margin-left: 20px;
+  margin-top: 50px;
+  padding: 50px;
+  border: solid rgb(209, 209, 199) 1px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05),0 4px 6px 18px rgba(0, 0, 0, 0.05);
+  width: 90%;
+  border-radius: 7px;
 
-/*animation */
-.loader {
-  position: relative;
-  width: 54px;
-  height: 54px;
-  border-radius: 10px;
 }
-
-.loader div {
-  width: 4%;
-  height: 14%;
-  background: rgb(128, 128, 128);
-  position: absolute;
-  left: 50%;
-  top: 30%;
-  opacity: 0;
-  border-radius: 50px;
-  box-shadow: 0 0 3px rgba(0,0,0,0.2);
-  animation: fade458 1s linear infinite;
-}
-
-@keyframes fade458 {
-  from {
-    opacity: 1;
+.boucle,#ligne{
+    display:flex;
+    flex-direction:row;
+    height: 50px;
+    margin-left: -50px;
+    margin-top: 10px;
+    border: solid rgb(173, 172, 168) 1px;
+    height: 70px;
+    border-radius: 4px;
+    cursor: text;
+  }
+  .boucle,#ligne:hover{
+    border:none
+  }
+  .ele,.titre{
+    /* padding:20px; */
+    flex:1;
+  	padding:5px;
+  } 
+  .ele{
+    /* margin-left: 0px; */
+    margin-top: 20px;
+    font-size: 15px;
+    font-weight:bolder;
   }
 
-  to {
-    opacity: 0.25;
-  }
+.boucle:nth-child(even) {
+  background-color:#f0e0c3;
+}
+.boucle:nth-child(odd) {
+  background-color:#a5dfdf;
+}
+.view{
+  fill: rgb(243, 247, 243);
+  margin-left: 50px;
 }
 
-.loader .bar1 {
-  transform: rotate(0deg) translate(0, -130%);
-  animation-delay: 0s;
-}
-
-.loader .bar2 {
-  transform: rotate(30deg) translate(0, -130%);
-  animation-delay: -1.1s;
-}
-
-.loader .bar3 {
-  transform: rotate(60deg) translate(0, -130%);
-  animation-delay: -1s;
-}
-
-.loader .bar4 {
-  transform: rotate(90deg) translate(0, -130%);
-  animation-delay: -0.9s;
-}
-
-.loader .bar5 {
-  transform: rotate(120deg) translate(0, -130%);
-  animation-delay: -0.8s;
-}
-
-.loader .bar6 {
-  transform: rotate(150deg) translate(0, -130%);
-  animation-delay: -0.7s;
-}
-
-.loader .bar7 {
-  transform: rotate(180deg) translate(0, -130%);
-  animation-delay: -0.6s;
-}
-
-.loader .bar8 {
-  transform: rotate(210deg) translate(0, -130%);
-  animation-delay: -0.5s;
-}
-
-.loader .bar9 {
-  transform: rotate(240deg) translate(0, -130%);
-  animation-delay: -0.4s;
-}
-
-.loader .bar10 {
-  transform: rotate(270deg) translate(0, -130%);
-  animation-delay: -0.3s;
-}
-
-.loader .bar11 {
-  transform: rotate(300deg) translate(0, -130%);
-  animation-delay: -0.2s;
-}
-
-.loader .bar12 {
-  transform: rotate(330deg) translate(0, -130%);
-  animation-delay: -0.1s;
-}
 
 
 </style>

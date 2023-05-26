@@ -7,13 +7,19 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
+      component:()=>import('../views/HomeView.vue')
+      
+    },
+    {
+      path: '/insription',
+      name: 'inscription',
       component:()=>import('../views/Inscription.vue')
       
     },
     {
-      path: '/about',
-      name: 'about',
-      component: () => import('../views/AboutView.vue')
+      path: '/list_proposition',
+      name: 'list_proposition',
+      component: () => import('../views/Mes_proposition.vue')
     },
     {
       path:'/contact',
@@ -53,6 +59,21 @@ const router = createRouter({
       path:'/list_my_annonce',
       name:'list_my_annoncce',
       component:()=>import('../views/My_Annonce.vue')
+    },
+    {
+      path:'/messagerie',
+      name:'messagerie',
+      component:()=>import('../views/Message.vue')
+    },
+    {
+      path:'/updating',
+      name:'updating,',
+      component:()=>import('../views/UpdatePasswork.vue')
+    },
+    {
+      path:'/UpdatePasswork',
+      name:'UpdatePasswork',
+      component:()=>import('../views/ResetPasswork.vue')
     }
   ]
 })

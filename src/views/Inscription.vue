@@ -1,8 +1,12 @@
 <script>
-import { RouterLink, RouterView } from 'vue-router'
+import { RouterLink, RouterView, useRouter } from 'vue-router'
 import axios from 'axios'
+import { ref } from 'vue'
 export default {
   setup(){
+    var router=useRouter()
+    var message=ref('')
+    var message_ok=ref('')
     const myFunction=()=> {
     var x = document.getElementById("myDialog");
     x.showModal();
@@ -13,11 +17,13 @@ export default {
   },
   data() {
     return {
+    message:'',
     email:'',
     nom:'',
     password:'',
     competence:'',
-    numcompte:''    
+    numcompte:'',
+    message_ok:''
     }
   },
   methods:{
@@ -28,10 +34,27 @@ export default {
           nom:this.nom,
           passe:this.password,
           competence:this.competence,
-          numcompte:this.numcompte
+        
         }
         )
-      .then(response=>{console.log(response)}, (err) => console.log(err)) 
+      .then(response=>{
+        console.log(response)
+        if(response.data.status==true){
+          var result=confirm("voulez vous vous connecter ?")
+          if(result==true){
+            this.$router.push({name:'connexion'})
+          }
+          else{
+            this.message_ok=response.data.message;
+          }
+         
+        }
+        else if(response.data.status==false){
+            this.message=response.data.message;
+            console.log(this.message)
+        }
+        
+    }, (err) => console.log(err)) 
     
     }
     
@@ -43,31 +66,32 @@ export default {
     <div>
             
     <form class="form">
+    <div class="eror">{{ message }} </div>  
+    <div class="valid">{{ message_ok }}</div>
        <p class="form-title">Cree un compte</p>
+       
         <div class="input-container">
-          <input placeholder="Enter email" type="email" v-model="email">
+          <input placeholder="Enter email" type="email" v-model="email" required>
          
       </div>
       <div class="input-container">
-          <input placeholder="Enter name" type="text" v-model="nom"> 
+          <input placeholder="Enter name" type="text" v-model="nom" required> 
         </div>
         <div class="input-container">
-          <input placeholder="Enter password" type="password" v-model="password">
+          <input placeholder="Enter password" type="password" v-model="password" required>
 
           
         </div>
         <div class="input-container">
-          <input placeholder="competence" type="text" v-model="competence">
+          <input placeholder="competence" type="text" v-model="competence" required>
         </div>
-        <div class="input-container">
-          <input placeholder="account number" type="text" v-model="numcompte">
-        </div>
+        
          <button class="submit" type="submit" @click="valid">
-        Sign in
+        Sign up
       </button>
 
       <p class="signup-link">
-        No account?
+      
         <router-link to="/connexion">Se_Connecter</router-link>
     
       </p>
@@ -77,14 +101,20 @@ export default {
 
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2? family=Quicksand&display=swap');
+*{
+  font-family:'Lucida Sans Regular', 'Lucida Grande', Geneva, Verdana;
+}
       .form {
+  /* margin-top: 10px; */
   background-color: #fff;
   display: block;
   padding: 1rem;
   max-width: 450px;
   border-radius: 0.5rem;
-  margin-left: 50px;
+  margin-left: 100px;
   margin-bottom: 80px;
+  border: solid rgb(230, 230, 221) 1px;
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
@@ -96,21 +126,57 @@ export default {
   color: #000;
 }
 
+@keyframes blink {
+  0% {
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.5;
+  }
+  30% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  70% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.eror ,.valid{
+  animation: blink 3s linear infinite;
+}
+.eror{
+  color: red;
+  font-size: 24px;
+}
+.valid{
+  color: rgb(43, 139, 56);
+  font-size: 24px;
+}
 .input-container {
   position: relative;
+  border: none;
+  
 }
 
 .input-container input, .form button {
   outline: none;
-  border: 1.3px solid #4f5155;
+  border: 1.3px solid #e8ecf0;
   margin: 8px 0;
 }
 
 .input-container input {
+  font-family: 'Quicksand', sans-serif;
+  cursor:pointer;
   background-color: #fff;
   padding: 1rem;
   padding-right: 3rem;
-  font-size: 0.875rem;
+  font-size: 22px;
   line-height: 1.25rem;
   width: 300px;
   border-radius: 0.5rem;
@@ -133,8 +199,12 @@ export default {
   width: 1rem;
   height: 1rem;
 }
-
+.submit:active{
+background-color: #d6d8db;
+  color: #4F46E5;
+}
 .submit {
+  cursor: pointer;
   display: block;
   padding-top: 0.75rem;
   padding-bottom: 0.75rem;

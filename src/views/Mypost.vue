@@ -2,14 +2,16 @@
 	 import axios from 'axios'
      import { ref } from 'vue';
      import { RouterLink, RouterView } from 'vue-router'
+     import { useRouter, useRoute } from 'vue-router'
 	export default{
 	setup(){
-	
-    var Querys=ref([]);
-	const  list_Query=()=>{
-                axios.get('http://localhost:3001/list_Query', {withCredentials:true})
+    const route = useRouter()
+    var Annonces=ref([]);
+    var status=ref()
+	const  list_Annonce=()=>{
+                axios.get('http://localhost:3001/list_My_annoce', {withCredentials:true})
         .then(response=>{console.log(response) 
-            Querys.value=response.data.message},
+            Annonces.value=response.data.message},
         (err)=>
         {
             if (err.response && err.response.data) 
@@ -21,13 +23,36 @@
                 console.log(err)
             }
         }) 
-        console.log(Querys.value);
+        console.log(Annonces.value);
 
-    }   
-    list_Query()
+    }  
+    const authentification = ()=> {
+        axios.get('http://localhost:3001/authentification',{withCredentials:true})
+            .then(response=>{
+            console.log(response)
+          // message.value=response.data.message
+          status.value=response.data.etat
+          if(status.value!=true){
+            route.push({name:'connexion'}) 
+          
+           }
+         
+        } , 
+        (err) => {
+            if (err.response && err.response.data) {
+              console.log(err.response.data)
+            alert("vous devez vous connecter")
+            } else {
+              console.log(err)
+            }
+        }) 
+        
+  } 
+    list_Annonce()
+    authentification()
 	
 	return{
-        Querys
+        Annonces
     }
 }
 		
@@ -37,27 +62,28 @@
 <template>
     <div>
      <tableau>
-        <!-- <h3 style="margin-left: 100px; text-decoration:;">ces annonce sont en attentes de reponse</h3> -->
+        <h3 style="margin-left: 100px; text-decoration:;">ces annonce sont en attentes de reponse</h3>
         <table  cellpadding="5" id="titre">
             <tr>
                 <td class="titre">Titre</td>
                 <td>Domaine</td>
                 <td>Budget</td>
                 <td>Date</td>
-                <td>Etat</td>
                 <td>supprimer</td>
                 <td>Allez voir</td>
+                <td class="dem-link">demandes d'emplois</td>
             </tr> 
         </table> 
-        <table v-for="Query in Querys" class="annonce" cellpadding="5">   
+        <table v-for="Annonce in Annonces" class="annonce" cellpadding="5">   
      
             <tr>
-                    <td> {{Query.titre}}</td>
-                    <td>{{Query.domaine}}</td>
-                    <td>{{Query.budget}}</td>
-                    <td>{{Query.date.substring(0.25)}}</td>
+                    <td> {{Annonce.titre}}</td>
+                    <td>{{Annonce.domaine}}</td>
+                    <td>{{Annonce.budget}}</td>
+                    <td>{{Annonce.date.substring(0.25)}}</td>
                     <td>
-                     
+                           <RouterLink :to="'/postuler?title=' + Annonce.titre+'&id='+Annonce.id+'&description='+Annonce.description+'&budget='+Annonce.budget+'&date='+Annonce.date+'&domaine='+Annonce.domaine" style="text-decoration: none;"><h4>supprimer</h4> </RouterLink>
+                                                                    
                         <div class="loader">
                             <div class="bar1"></div>
                             <div class="bar2"></div>
@@ -72,10 +98,10 @@
                             <div class="bar11"></div>
                             <div class="bar12"></div>
                         </div> 
-                    </td>    
-                    <td>supprimer</td>
-                    <td>          <RouterLink :to="'/postuler?title=' + Query.titre+'&id='+Query.id+'&description='+Query.description+'&budget='+Query.budget+'&date='+Query.date+'&domaine='+Query.domaine" style="text-decoration: none;">voire</RouterLink></td>
-          
+                    </td>
+                    <td>     <RouterLink :to="'/postuler?title=' + Annonce.titre+'&id='+Annonce.id+'&description='+Annonce.description+'&budget='+Annonce.budget+'&date='+Annonce.date+'&domaine='+Annonce.domaine" style="text-decoration: none;"><h4>Voire</h4> </RouterLink></td>
+                    <td class="dem-link">     <RouterLink :to="'/list_proposition?title=' + Annonce.titre+'&id='+Annonce.id+'&description='+Annonce.description+'&budget='+Annonce.budget+'&date='+Annonce.date+'&domaine='+Annonce.domaine" style="text-decoration: none;"><h4>Voire les demandes</h4> </RouterLink></td>
+
             </tr>
         
         </table>
@@ -87,9 +113,16 @@
 </template>
 
 <style scoped>
+*{
+  font-family:'Lucida Sans Regular', 'Lucida Grande', Geneva, Verdana;
+
+}
 td{
     width: 140px;
 
+}
+.dem-link{
+  width: 200px;
 }
 table{
    

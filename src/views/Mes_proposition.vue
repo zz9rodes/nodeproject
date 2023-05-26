@@ -2,14 +2,22 @@
 	 import axios from 'axios'
      import { ref } from 'vue';
      import { RouterLink, RouterView } from 'vue-router'
-	export default{
+     import { useRoute } from 'vue-router'
+    
+     export default{
 	setup(){
-	
-    var Querys=ref([]);
-	const  list_Query=()=>{
-                axios.get('http://localhost:3001/list_Query', {withCredentials:true})
+    const route = useRoute()
+    var propositions=ref([]);
+    var Id=route.query.id;
+    var titre=route.query.title;
+    var description=route.query.description;
+    var domaine=route.query.domaine;
+	const  list_Proposition =()=>{
+                axios.post('http://localhost:3001/list_proposition',{
+                    id:Id
+                }, {withCredentials:true})
         .then(response=>{console.log(response) 
-            Querys.value=response.data.message},
+            propositions.value=response.data.message},
         (err)=>
         {
             if (err.response && err.response.data) 
@@ -21,13 +29,17 @@
                 console.log(err)
             }
         }) 
-        console.log(Querys.value);
+        console.log(propositions.value);
 
     }   
-    list_Query()
+    list_Proposition()
 	
 	return{
-        Querys
+        propositions,
+        Id,
+        titre,
+        domaine,
+        description,
     }
 }
 		
@@ -37,45 +49,39 @@
 <template>
     <div>
      <tableau>
-        <!-- <h3 style="margin-left: 100px; text-decoration:;">ces annonce sont en attentes de reponse</h3> -->
+        <h3 style="margin-left: 100px; text-decoration:;">les propositions de votre annonce </h3>
         <table  cellpadding="5" id="titre">
             <tr>
-                <td class="titre">Titre</td>
-                <td>Domaine</td>
-                <td>Budget</td>
-                <td>Date</td>
-                <td>Etat</td>
-                <td>supprimer</td>
-                <td>Allez voir</td>
+                
+                <td>titre du post</td>
+                <td>domaine</td>
+                <td>description</td>
+                <td>pseudo</td>
+              
+                <td>competence</td>
+                <td>Reponse</td>
+                <td>contacter</td>
+                <td class="dem-link">voire profil</td>
+                <td class="email">G-mail</td>
             </tr> 
         </table> 
-        <table v-for="Query in Querys" class="annonce" cellpadding="5">   
+        <table v-for="proposition in propositions" class="annonce" cellpadding="5">   
      
             <tr>
-                    <td> {{Query.titre}}</td>
-                    <td>{{Query.domaine}}</td>
-                    <td>{{Query.budget}}</td>
-                    <td>{{Query.date.substring(0.25)}}</td>
+                    <td>{{titre}}</td>
+                    <td>{{domaine}}</td>
+                    <td>{{description}}</td>
+                    <td>{{proposition.email}}</td>
+                    
+                    <td>{{proposition.competence}}</td>
                     <td>
-                     
-                        <div class="loader">
-                            <div class="bar1"></div>
-                            <div class="bar2"></div>
-                            <div class="bar3"></div>
-                            <div class="bar4"></div>
-                            <div class="bar5"></div>
-                            <div class="bar6"></div>
-                            <div class="bar7"></div>
-                            <div class="bar8"></div>
-                            <div class="bar9"></div>
-                            <div class="bar10"></div>
-                            <div class="bar11"></div>
-                            <div class="bar12"></div>
-                        </div> 
-                    </td>    
-                    <td>supprimer</td>
-                    <td>          <RouterLink :to="'/postuler?title=' + Query.titre+'&id='+Query.id+'&description='+Query.description+'&budget='+Query.budget+'&date='+Query.date+'&domaine='+Query.domaine" style="text-decoration: none;">voire</RouterLink></td>
-          
+                      <RouterLink :to="'/postuler?title='+'&id='+'&description='+'&budget='+'&date='+'&domaine='" style="text-decoration: none;"><h4>supprimer</h4> </RouterLink>
+                    </td>
+                    <td>
+                      <RouterLink :to="'/messagerie?email='+proposition.email" style="text-decoration: none;"><h4>message</h4> </RouterLink>
+                    </td>
+                    <td class="dem-link" >  asdfghj  </td> 
+                    <td class="email"><a href="proposition.email">Send mail</a></td>
             </tr>
         
         </table>
@@ -88,9 +94,12 @@
 
 <style scoped>
 td{
-    width: 140px;
+    width: 130px;
 
 }
+/* .dem-link{
+  width: 200px;
+} */
 table{
    
     border-collapse: collapse;
@@ -114,6 +123,14 @@ table, td {
 }
 tableau{
     border-radius: 6px;
+}
+.email{
+  width: 100px;
+  text-decoration: none;
+}
+a{
+  text-decoration: none;
+  color: black;
 }
 
 /*animation */

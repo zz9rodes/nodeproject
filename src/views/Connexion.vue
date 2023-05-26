@@ -1,38 +1,91 @@
 <script>
 import { RouterLink, RouterView } from 'vue-router'
-import { ref } from 'vue';
-    import axios from 'axios'
+
+import { ref } from 'vue'
+import axios from 'axios'
+import { useRouter, useRoute } from 'vue-router'
+ 
+    
     export default{
-        setup(){
-          var email=ref('');
-          var password=ref('');
-        const  Se_Connecter=(ev)=>{
+    setup() {
+        const router = useRouter();
+        var email = ref("");
+        var password = ref("");
+        var look=ref(true)
+        var etat = ref("");
+        var message=ref('')
+        var message_verif=ref('')
+         /**fonction pour envoyer la connexion */
+        const Se_Connecter = (ev) => {
+            ev.preventDefault();
+            axios.post("http://localhost:3001/connexion", {
+                email: email.value,
+                passe: password.value,
+            }, { withCredentials: true })
+                .then(response => {
+                console.log(response);
+                etat.value = response.data.etat;
+               
+                if (etat.value == true) {
+                    router.push({ name: "list_annonce" });
+                }
+                else{
+                  message.value=response.data.message;
+                }
+            },
+            (err) => console.log(err.response.data)
+            );
+        }
+        /**fonction pour envoyer l'email de verification */
+          const updatePasswork =(ev)=>{
                 ev.preventDefault()
-                axios.post('http://localhost:3001/connexion',
+                axios.post('http://localhost:3001/update',
           {
             email:email.value,
-            passe:password.value,
           }, {withCredentials:true}
         )
-        .then(response=>{console.log(response)}, (err) => console.log(err.response.data)) 
-
+        .then(response=>{
+          console.log(response)
+          etat.value=response.data.etat;
+          message_verif.value=response.data.message
+              
+            }, (err) => {
+              console.log(err.response.data)
             }
-
-        return{
-                email,
-                password,
-                Se_Connecter,
-           }
-
-        },
-      }
+            )
+        }
+        /** fonction pour le cachez la connexion  */
+        const voire=()=>{
+          look.value=false;
+          message_verif.value=''
+        }
+         /** fonction pour le cachez l'envois d'email  */
+         const cacher=()=>{
+          look.value=true;
+          message.value='';
+        }
+        return {
+            voire,
+            cacher,
+            look,
+            email,
+            password,
+            message,
+            message_verif,
+            Se_Connecter,
+            updatePasswork,
+        };
+    },
+    
+}
 
 </script>
 
 <template>
     <div>
-        <form class="form">
-       <p class="form-title">Sign in to your account</p>
+    <form class="form"  v-if="look" @submit="Se_Connecter"> 
+      <div class="eror">{{ message }}</div>  
+       <p class="form-title">Login</p>
         <div class="input-container">
           <input placeholder="Enter email" type="email" v-model="email">
         </div>
@@ -43,22 +96,46 @@ import { ref } from 'vue';
           
         </div>
         
-         <button class="submit" type="submit" @click="Se_Connecter">
+         <button class="submit" type="submit" >
        Se Connecter
       </button>
 
-      <p class="signup-link">
-        No account?
-        <router-link to="/inscription">Cree un compte</router-link>
-        
+      <p class="signup-link" @click="voire" style="font-size: 19px; text-decoration: none; cursor: pointer;"> 
+       <!-- <h3 @click="voire">mot de passe oublier </h3>  -->
+        <a to="/updating" style="font-size: 19px; text-decoration: none;" @click="voire">mot de passe oublier </a>
       </p>
    </form>
+ 
+    <form class="form" v-else  @submit="updatePasswork">
+      <div class="eror">{{ message_verif }}</div>
+       <p class="form-title">send your email</p>
+        <div class="input-container">
+          <input placeholder="Enter email" type="email" v-model="email" required>
+        </div>
+      
+        
+        
+         <button class="submit" type="submit" >
+        Send
+
+      </button>
+      <p class="signup-link" style="font-size: 19px; text-decoration: none; cursor: pointer;"> 
+      <a to="/connexion" style="font-size: 19px; text-decoration: none;" @click="cacher">Se conneter</a>
+      </p>
+    </form>
 
     </div>
 </template>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2? family=Quicksand&display=swap');
+*{
+  font-family:'Lucida Sans Regular', 'Lucida Grande', Geneva, Verdana;
+  font-family:'Lucida Sans Regular', 'Lucida Grande', Geneva, Verdana;
+}
 .form {
+margin-top: 100px;
+margin-left: 50px;
 background-color: #fff;
 display: block;
 padding: 1rem;
@@ -66,6 +143,7 @@ max-width: 450px;
 margin-bottom: 80x;
 margin-left: 50px;
 border-radius: 0.5rem;
+border: solid rgb(230, 230, 221) 1px;
 box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
@@ -83,19 +161,20 @@ position: relative;
  
 .input-container input, .form button {
 outline: none;
-border: 1.px solid #d6d8db;
+border: 1.3px solid #e8ecf0;
 margin: 8px 0;
 }
 
 .input-container input {
+  font-family: 'Quicksand', sans-serif;
 background-color: #fff;
 padding: 1rem;
 padding-right: 3rem;
-font-size: 0.875rem;
+font-size: 22px;
 line-height: 1.25rem;
 width: 300px;
 border-radius: 0.5rem;
-box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+box-shadow: 0 1px 2px 0 rgba(236, 233, 233, 0.05);
 }
 
 .input-container span {
@@ -115,7 +194,12 @@ width: 1rem;
 height: 1rem;
 }
 
+.submit:active{
+  background-color: #d6d8db;
+  color: #4F46E5;
+}
 .submit {
+  cursor: pointer;
 display: block;
 padding-top: 0.75rem;
 padding-bottom: 0.75rem;
@@ -129,6 +213,7 @@ font-weight: 500;
 width: 70%;
 border-radius: 0.5rem;
 text-transform: uppercase;
+border: none;
 }
 
 .signup-link {
@@ -140,5 +225,33 @@ text-align: center;
 
 .signup-link a {
 text-decoration: underline;
+}
+
+.eror {
+  /* animation: blink 3s linear infinite; */
+}
+.eror{
+  color: rgb(52, 192, 64);
+  font-size: 24px;
+}
+@keyframes blink {
+  0% {
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.5;
+  }
+  30% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  70% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 </style>

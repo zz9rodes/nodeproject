@@ -2,14 +2,41 @@
 import {ref} from 'vue'
 import axios from 'axios'
 import { RouterLink, RouterView } from 'vue-router'
+
+import { useRouter, useRoute } from 'vue-router'
 export default{
     setup(){     
-     var annonces=ref([]);
+    const route = useRouter()
+     var annonces=ref([])
+     var message=ref()
+     var status=ref()
       const Se_Connecter = ()=> {
         axios.get('http://localhost:3001/List_annonce',{withCredentials:true})
             .then(response=>{
             console.log(response)
           annonces.value=response.data.message
+                        
+        } , 
+        (err) => {
+            if (err.response && err.response.data) {
+              console.log(err.response.data)
+            // alert("vous devez vous connecter")
+            } else {
+              console.log(err)
+            }
+        }) 
+        console.log(annonces.value);
+  }
+  const authentification = ()=> {
+        axios.get('http://localhost:3001/authentification',{withCredentials:true})
+            .then(response=>{
+            console.log(response)
+          message.value=response.data.message
+          status.value=response.data.etat
+          if(status.value!=true){
+            route.push({name:'home'}) 
+          //  window.location.replace("/connexion");
+           }
          
         } , 
         (err) => {
@@ -23,12 +50,14 @@ export default{
         console.log(annonces.value);
   }
     Se_Connecter()
+    authentification()
+  
     return {
+        status,
+        message,
         annonces,
         nombres:[{nombre:"1"},{nombre:"2"},{nombre:"3"}],
-        
-      
-    }
+       }
 },
 
 
@@ -46,58 +75,59 @@ export default{
        
      <div id="doc">
         
-        <section id="section">
+        <section id="section" >
+        
             <div v-for="annonce in annonces" id="annonces">
-                <div class="annonce">
-                    <RouterLink :to="'/postuler?title=' + annonce.titre+'&id='+annonce.id+'&description='+annonce.description+'&budget='+annonce.budget+'&date='+annonce.date+'&domaine='+annonce.domaine" style="text-decoration: none;">
+              
+                    <div class="card">
+                      <RouterLink :to="'/postuler?title=' + annonce.titre+'&id='+annonce.id+'&description='+annonce.description+'&budget='+annonce.budget+'&date='+annonce.date+'&domaine='+annonce.domaine+'&email='+annonce.email+'&pseudo='+annonce.pseudo" style="text-decoration: none;">
                   
-                        <div class="rows"> 
-                        <h1 id="titre">{{ annonce.titre }}</h1>
-                       
-                          <input type="email" :value="annonce.id" v-mode="id" hidden>
-                
-                      
-                       </div>
-                    <div id="description">
-                        <span> {{annonce.description}} </span>
-                    </div>
-                    <div id="domaine">
-                        <span> {{annonce.domaine}} </span>
-                    </div>
-                    
-                    <div >
-                        <span id="budget" style="background-color: azure; opacity: 1;">  j'ai un budget de  : {{annonce.budget}}Fcfa</span>
-                        <span id="date">  a ete envoyer le :{{annonce.date}} </span>
-                    </div>
-                    <hr>
-                    </RouterLink>
-                   
-                
-                    <div id="comment">
-                        <div class="likes" >
-                            <div class="con-like">
-                                <input title="like" type="checkbox" class="like">
-                                <div class="checkmark">
-                                    <svg viewBox="0 0 24 24" class="outline" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Zm-3.585,18.4a2.973,2.973,0,0,1-3.83,0C4.947,16.006,2,11.87,2,8.967a4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,11,8.967a1,1,0,0,0,2,0,4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,22,8.967C22,11.87,19.053,16.006,13.915,20.313Z"></path>
-                                    </svg>
-                                    <svg viewBox="0 0 24 24" class="filled" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Z"></path>
-                                    </svg>
-                                    <svg class="celebrate" width="100" height="100" xmlns="http://www.w3.org/2000/svg">
-                                    <polygon points="10,10 20,20" class="poly"></polygon>
-                                    <polygon points="10,50 20,50" class="poly"></polygon>
-                                    <polygon points="20,80 30,70" class="poly"></polygon>
-                                    <polygon points="90,10 80,20" class="poly"></polygon>
-                                    <polygon points="90,50 80,50" class="poly"></polygon>
-                                    <polygon points="80,80 70,70" class="poly"></polygon>
-                                    </svg>
+                           <div class="header">
+                              <p style="margin-left: 40px;margin-top: 10px;  font-size: 17px ; color: black; margin-top: 13px; font-weight: bold;">
+                               {{ annonce.titre }}
+                              </p>
+                            </div>
+                            <div class="info"> 
+                              <p class="title">{{ annonce.domaine }}</p>
+                              <p style="font-weight: bold;">{{ annonce.description }} </p>
+                            </div>
+                      </RouterLink>      
+                            <div class="footer">
+                            <div id="comment">
+                              <div class="likes" >
+                                <div class="con-like">
+                                 <input title="like" type="checkbox" class="like">
+                                  <div class="checkmark">
+                                      <svg viewBox="0 0 24 24" class="outline" xmlns="http://www.w3.org/2000/svg">
+                                      <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Zm-3.585,18.4a2.973,2.973,0,0,1-3.83,0C4.947,16.006,2,11.87,2,8.967a4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,11,8.967a1,1,0,0,0,2,0,4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,22,8.967C22,11.87,19.053,16.006,13.915,20.313Z"></path>
+                                      </svg>
+                                      <svg viewBox="0 0 24 24" class="filled" xmlns="http://www.w3.org/2000/svg">
+                                      <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Z"></path>
+                                      </svg>
+                                      <svg class="celebrate" width="100" height="100" xmlns="http://www.w3.org/2000/svg">
+                                      <polygon points="10,10 20,20" class="poly"></polygon>
+                                      <polygon points="10,50 20,50" class="poly"></polygon>
+                                      <polygon points="20,80 30,70" class="poly"></polygon>
+                                      <polygon points="90,10 80,20" class="poly"></polygon>
+                                      <polygon points="90,50 80,50" class="poly"></polygon>
+                                      <polygon points="80,80 70,70" class="poly"></polygon>
+                                      </svg>
                                                                     
                                 </div>
                                 </div>
+                              </div>
+                 
+                            </div>
+                              <p class="tag">Budget {{ annonce.budget }} Fcfa</p>
+                              <button type="button" class="action">{{ annonce.date }} </button>
+                            </div>
+                         
+                         
                         </div>
-                    </div>
-                </div>
+                 
+                   
+                
+                      
             
             </div> 
         </section>
@@ -116,7 +146,7 @@ export default{
 }
 
 *{
-    font-family: 'Changa', sans-serif;
+  font-family:'Lucida Sans Regular', 'Lucida Grande', Geneva, Verdana;
     font-size: 100%;
     
 }
@@ -128,24 +158,6 @@ export default{
 #domaine,#titre{
     margin-left: 70px;
 }
- #annonces{
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-} 
-.annonce{
-    transition: 0.8s;
-    transform: scale(0.9);
-    border-bottom-right-radius: none;
-    display: flex;
-    flex-direction:column;
-    border-radius: 18px;
-    background-color: rgb(248, 249, 250);
-    border-bottom: solid black;
-    width: 100%;
-    }
-
-
 
 #link{
     color: darkgreen;
@@ -180,11 +192,88 @@ export default{
     display: flex;
     flex-direction: row;
 }
+.card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-radius: 0.75rem;
+  background-color: rgb(234, 240, 243);
+  width: 80%;
+  height: 300px;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,.1),
+  0 2px 4px -2px rgba(0,0,0,.1);
+  border-bottom:4px  solid rgba(11, 57, 156, 0.479) ;
+  margin-top: 20px;
+}
 
+.header {
+  width: 40%;
+  position: relative;
+  background-clip: border-box;
+  margin-top: 1.5rem;
+  margin-left: 1rem;
+  margin-right: 1rem;
+  border-radius: 4px;
+  background-color: rgb(14, 121, 209);
+  box-shadow: 0 10px 15px -3px rgba(33,150,243,.4),0 4px 6px -4px rgba(33,150,243,.4);
+  height: 3rem;
+}
 
+.info {
+  border: none;
+  padding: 1.5rem;
+  text-align: center;
+}
 
- .con-like {
-  --red: #ee427b;
+.title {
+  color: rgb(6, 79, 116);
+  letter-spacing: 0;
+  line-height: 1.375;
+  font-weight: 600;
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.footer {
+  padding: 0.75rem;
+  border: 1px solid rgb(236 239 241);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: rgba(0, 140, 255, 0.082);
+}
+
+.tag {
+  font-weight: 300;
+  font-size: 17px;
+  display: block;
+  margin-left: 100px ;
+  font-weight: bold;
+}
+.action:active{
+    background-color:rgb(255 255 255);
+    color:rgb(33 150 243);
+}
+.action {
+    
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  box-shadow: 0 4px 6px -1px rgba(33,150,243,.4),0 2px 4px -2px rgba(33,150,243,.4);
+  color: rgb(255 255 255);
+  text-transform: uppercase;
+  font-weight: 700;
+  font-size: .75rem;
+  padding: 0.75rem 1.5rem;
+  background-color: rgb(33 150 243);
+  border-radius: 0.5rem;
+}
+
+.con-like {
+  --red: rgb(211, 86, 107);
   position: relative;
   width: 50px;
   height: 50px;
@@ -238,17 +327,6 @@ export default{
   display: block
 }
 
-@keyframes kfr-filled {
-  0% {
-    opacity: 0;
-    transform: scale(0);
-  }
-
-  50% {
-    opacity: 1;
-    transform: scale(1.2);
-  }
-}
 
 @keyframes kfr-celebrate {
   0% {
@@ -265,6 +343,5 @@ export default{
     display: none;
   }
 }
-
 
 </style>

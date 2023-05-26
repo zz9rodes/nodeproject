@@ -2,10 +2,12 @@
 	 import axios from 'axios'
      import { ref } from 'vue';
      import { RouterLink, RouterView } from 'vue-router'
+     import { useRouter, useRoute } from 'vue-router'
 	export default{
 	setup(){
-	
+    const route = useRouter()
     var Annonces=ref([]);
+    var status=ref()
 	const  list_Annonce=()=>{
                 axios.get('http://localhost:3001/list_My_annoce', {withCredentials:true})
         .then(response=>{console.log(response) 
@@ -23,8 +25,31 @@
         }) 
         console.log(Annonces.value);
 
-    }   
+    }  
+    const authentification = ()=> {
+        axios.get('http://localhost:3001/authentification',{withCredentials:true})
+            .then(response=>{
+            console.log(response)
+          // message.value=response.data.message
+          status.value=response.data.etat
+          if(status.value!=true){
+            route.push({name:'home'}) 
+          
+           }
+         
+        } , 
+        (err) => {
+            if (err.response && err.response.data) {
+              console.log(err.response.data)
+            alert("vous devez vous connecter")
+            } else {
+              console.log(err)
+            }
+        }) 
+        
+  } 
     list_Annonce()
+    authentification()
 	
 	return{
         Annonces
@@ -36,172 +61,79 @@
 
 <template>
     <div>
-     <tableau>
-        <!-- <h3 style="margin-left: 100px; text-decoration:;">ces annonce sont en attentes de reponse</h3> -->
-        <table  cellpadding="5" id="titre">
-            <tr>
-                <td class="titre">Titre</td>
-                <td>Domaine</td>
-                <td>Budget</td>
-                <td>Date</td>
-                <td>Etat</td>
-                <td>Allez voir</td>
-            </tr> 
-        </table> 
-        <table v-for="Annonce in Annonces" class="annonce" cellpadding="5">   
-     
-            <tr>
-                    <td> {{Annonce.titre}}</td>
-                    <td>{{Annonce.domaine}}</td>
-                    <td>{{Annonce.budget}}</td>
-                    <td>{{Annonce.date.substring(0.25)}}</td>
-                    <td>
-                        <div class="loader">
-                            <div class="bar1"></div>
-                            <div class="bar2"></div>
-                            <div class="bar3"></div>
-                            <div class="bar4"></div>
-                            <div class="bar5"></div>
-                            <div class="bar6"></div>
-                            <div class="bar7"></div>
-                            <div class="bar8"></div>
-                            <div class="bar9"></div>
-                            <div class="bar10"></div>
-                            <div class="bar11"></div>
-                            <div class="bar12"></div>
-                        </div> 
-                    </td>
-                    <td>     <RouterLink :to="'/postuler?title=' + Annonce.titre+'&id='+Annonce.id+'&description='+Annonce.description+'&budget='+Annonce.budget+'&date='+Annonce.date+'&domaine='+Annonce.domaine" style="text-decoration: none;"><h4>Voire</h4> </RouterLink></td>
-            </tr>
-        
-        </table>
-     </tableau>
-      
-        
+        <h1 style="text-align: center; margin-top: 100px;margin-bottom: 100px;">your   posts </h1>
+    <ul>  
+      <div  id="ligne">
+          <div class=" titre">titre</div>
+          <div class=" titre"> domaine</div>
+          <div class=" titre"> budget (fCfa)</div>
+          <div class=" titre"> dates</div>
+          <div class=" titre"> allez vers</div>
+      </div>
+         
+        <div v-for="Annonce in Annonces"   class="boucle " id="ligne">
+          <div class="ele">{{Annonce.titre}} </div>
+          <div class="ele"> {{Annonce.domaine}}</div>
+          <div class="ele"> {{Annonce.budget}} Fcfa</div>
+          <div class="ele"> {{Annonce.date.substring(0.25)}}</div>
+          <div class="ele"> 
+            <RouterLink :to="'/postuler?title=' + Annonce.titre+'&id='+Annonce.id+'&description='+Annonce.description+'&budget='+Annonce.budget+'&date='+Annonce.date+'&domaine='+Annonce.domaine" style="text-decoration: none;"> 
+                
+<svg xmlns="http://www.w3.org/2000/svg" height="28" class="view" viewBox="0 -960 960 960" width="48"><path d="M480.118-330Q551-330 600.5-379.618q49.5-49.617 49.5-120.5Q650-571 600.382-620.5q-49.617-49.5-120.5-49.5Q409-670 359.5-620.382q-49.5 49.617-49.5 120.5Q310-429 359.618-379.5q49.617 49.5 120.5 49.5Zm-.353-58Q433-388 400.5-420.735q-32.5-32.736-32.5-79.5Q368-547 400.735-579.5q32.736-32.5 79.5-32.5Q527-612 559.5-579.265q32.5 32.736 32.5 79.5Q592-453 559.265-420.5q-32.736 32.5-79.5 32.5ZM480-200q-146 0-264-83T40-500q58-134 176-217t264-83q146 0 264 83t176 217q-58 134-176 217t-264 83Zm0-300Zm-.169 240Q601-260 702.5-325.5 804-391 857-500q-53-109-154.331-174.5-101.332-65.5-222.5-65.5Q359-740 257.5-674.5 156-609 102-500q54 109 155.331 174.5 101.332 65.5 222.5 65.5Z"/></svg>
+            </RouterLink>
+          </div>
+        </div>
+    </ul>
       
     </div>
 </template>
 
 <style scoped>
-td{
-    width: 140px;
+*{
+  font-family:'Lucida Sans Regular', 'Lucida Grande', Geneva, Verdana;
 
 }
-table{
-   
-    border-collapse: collapse;
-    border-radius: 2px;
+.titre{
+  /* background-color: rgb(130, 136, 135); */
+  height: 40px;
+  font-size:  24px;
+  /* border: solid rgb(184, 184, 175) 1px; */
 }
-.annonce:nth-child(even) {
-  background-color:#D0D8DD;
+.dem-link{
+  width: 200px;
 }
-.annonce:nth-child(odd) {
-  background-color:#7DBCC2;
-}
-table, td {
-  /* border: 1px solid black; */
- 
-}
-#titre{
-   background-color: #516BEC;
-   border-bottom: 2px solid black;
-   height: 70px;
-   font-size: 23px ;
-}
-tableau{
-    border-radius: 6px;
-}
-
-/*animation */
-.loader {
-  position: relative;
-  width: 54px;
-  height: 54px;
-  border-radius: 10px;
-}
-
-.loader div {
-  width: 4%;
-  height: 14%;
-  background: rgb(128, 128, 128);
-  position: absolute;
-  left: 50%;
-  top: 30%;
-  opacity: 0;
-  border-radius: 50px;
-  box-shadow: 0 0 3px rgba(0,0,0,0.2);
-  animation: fade458 1s linear infinite;
-}
-
-@keyframes fade458 {
-  from {
-    opacity: 1;
+.boucle,#ligne{
+    display:flex;
+    flex-direction:row;
+    height: 50px;
+    margin-top: 10px;
+    border: solid rgb(173, 172, 168) 1px;
+    height: 70px;
+    border-radius: 4px;
+  }
+  .boucle,#ligne:hover{
+    border:none
+  }
+  .ele,.titre{
+    /* padding:20px; */
+    flex:1;
+  	padding:5px;
+  } 
+  .ele{
+    /* margin-left: 0px; */
+    margin-top: 20px;
+    font-size: 15px;
+    font-weight:bolder;
   }
 
-  to {
-    opacity: 0.25;
-  }
+.boucle:nth-child(even) {
+  background-color:#f0e0c3;
 }
-
-.loader .bar1 {
-  transform: rotate(0deg) translate(0, -130%);
-  animation-delay: 0s;
+.boucle:nth-child(odd) {
+  background-color:#a5dfdf;
 }
-
-.loader .bar2 {
-  transform: rotate(30deg) translate(0, -130%);
-  animation-delay: -1.1s;
+.view{
+  fill: rgb(243, 247, 243);
+  margin-left: 50px;
 }
-
-.loader .bar3 {
-  transform: rotate(60deg) translate(0, -130%);
-  animation-delay: -1s;
-}
-
-.loader .bar4 {
-  transform: rotate(90deg) translate(0, -130%);
-  animation-delay: -0.9s;
-}
-
-.loader .bar5 {
-  transform: rotate(120deg) translate(0, -130%);
-  animation-delay: -0.8s;
-}
-
-.loader .bar6 {
-  transform: rotate(150deg) translate(0, -130%);
-  animation-delay: -0.7s;
-}
-
-.loader .bar7 {
-  transform: rotate(180deg) translate(0, -130%);
-  animation-delay: -0.6s;
-}
-
-.loader .bar8 {
-  transform: rotate(210deg) translate(0, -130%);
-  animation-delay: -0.5s;
-}
-
-.loader .bar9 {
-  transform: rotate(240deg) translate(0, -130%);
-  animation-delay: -0.4s;
-}
-
-.loader .bar10 {
-  transform: rotate(270deg) translate(0, -130%);
-  animation-delay: -0.3s;
-}
-
-.loader .bar11 {
-  transform: rotate(300deg) translate(0, -130%);
-  animation-delay: -0.2s;
-}
-
-.loader .bar12 {
-  transform: rotate(330deg) translate(0, -130%);
-  animation-delay: -0.1s;
-}
-
-
 </style>

@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host 0.0.0.0",
     "build": "vite build",
     "preview": "vite preview"
   },
@@ -16,6 +16,7 @@
     "express-session": "^1.17.3",
     "md5": "^2.3.0",
     "mysql": "^2.18.1",
+    "nodemailer": "^6.9.2",
     "vue": "^3.2.47",
     "vue-router": "^4.1.6"
   },

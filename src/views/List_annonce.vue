@@ -73,7 +73,7 @@ export default{
     <div >
         
        
-     <div id="doc">
+     <div id="doc" style="margin-top: 160px;">
         
         <section id="section" >
         
@@ -83,13 +83,13 @@ export default{
                       <RouterLink :to="'/postuler?title=' + annonce.titre+'&id='+annonce.id+'&description='+annonce.description+'&budget='+annonce.budget+'&date='+annonce.date+'&domaine='+annonce.domaine+'&email='+annonce.email+'&pseudo='+annonce.pseudo" style="text-decoration: none;">
                   
                            <div class="header">
-                              <p style="margin-left: 40px;margin-top: 10px;  font-size: 17px ; color: black; margin-top: 13px; font-weight: bold;">
+                              <p  id="titre" style="">
                                {{ annonce.titre }}
                               </p>
                             </div>
                             <div class="info"> 
-                              <p class="title">{{ annonce.domaine }}</p>
-                              <p style="font-weight: bold;">{{ annonce.description }} </p>
+                              <p class="title" style="width: 40%;" >{{ annonce.domaine }}</p>
+                              <p class="title">{{ annonce.description }} </p>
                             </div>
                       </RouterLink>      
                             <div class="footer">
@@ -118,7 +118,7 @@ export default{
                               </div>
                  
                             </div>
-                              <p class="tag">Budget {{ annonce.budget }} Fcfa</p>
+                              <p class="tag action" >Budget {{ annonce.budget }} Fcfa</p>
                               <button type="button" class="action">{{ annonce.date }} </button>
                             </div>
                          
@@ -169,16 +169,19 @@ export default{
     border-radius: 50px;
 }
 #titre{
-    color: rgba(3, 2, 15, 0.952);
-    font-size: 24px;
+  margin-left: 40px;
+  margin-top: 10px;
+    font-size: 17px ;
+   color: black; 
+   margin-top: 13px; 
+   font-weight: bold;
 }
 #description{
     color: rgb(0, 0, 0);
     margin-left: 80px;
     margin-bottom: 50px;
     font-size: 17px;
-    background-color: rgb(143, 143, 138);
-    /* width: 100%; */
+    background-color: rgb(236, 236, 229);
     height: auto;
 }
 #budget{
@@ -197,13 +200,16 @@ export default{
   flex-direction: column;
   justify-content: space-between;
   border-radius: 0.75rem;
-  background-color: rgb(234, 240, 243);
+  background-color: rgb(255, 255, 255);
   width: 80%;
   height: 300px;
   box-shadow: 0 4px 6px -1px rgba(0,0,0,.1),
   0 2px 4px -2px rgba(0,0,0,.1);
-  border-bottom:4px  solid rgba(11, 57, 156, 0.479) ;
   margin-top: 20px;
+  margin-left: 100px;
+  border: solid rgb(230, 230, 221) 2px;
+box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
 }
 
 .header {
@@ -214,9 +220,10 @@ export default{
   margin-left: 1rem;
   margin-right: 1rem;
   border-radius: 4px;
-  background-color: rgb(14, 121, 209);
-  box-shadow: 0 10px 15px -3px rgba(33,150,243,.4),0 4px 6px -4px rgba(33,150,243,.4);
   height: 3rem;
+  border: solid rgb(230, 230, 221) 2px;
+box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
 }
 
 .info {
@@ -226,12 +233,16 @@ export default{
 }
 
 .title {
-  color: rgb(6, 79, 116);
+  color: rgb(5, 5, 5);
   letter-spacing: 0;
   line-height: 1.375;
   font-weight: 600;
   font-size: 1.25rem;
   margin-bottom: 0.5rem;
+  border-radius: 4px;
+  border: solid rgb(230, 230, 221) 1px;
+box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
 }
 
 .footer {
@@ -240,8 +251,7 @@ export default{
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: rgba(0, 140, 255, 0.082);
-}
+  }
 
 .tag {
   font-weight: 300;
@@ -273,7 +283,7 @@ export default{
 }
 
 .con-like {
-  --red: rgb(211, 86, 107);
+  --red: rgb(230, 110, 130);
   position: relative;
   width: 50px;
   height: 50px;

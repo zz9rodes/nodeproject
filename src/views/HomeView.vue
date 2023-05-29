@@ -6,7 +6,7 @@ import { RouterLink, RouterView } from 'vue-router'
 import { useRoute } from 'vue-router'
 import { ref } from 'vue'
 
-var look=ref(false);
+var look=ref(true);
 
 
 const login=()=>{

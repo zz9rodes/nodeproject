@@ -2,24 +2,32 @@
 import { RouterLink, RouterView } from 'vue-router'
 import { ref } from 'vue';
 import axios from 'axios';
-import { useRoute } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
+
 
 
 
 export default{
  
     setup(){
+      const router = useRouter()
        var description=ref('')
+       var status=ref('')
        var look_comments=ref(false)
        var look=ref(true)
        var commentaires=ref([]);
+       var etat=ref(false)
+       var infos=ref([])
+       var nombres_annonce=ref()
         const route = useRoute()
         console.log(route.query.id)
         var Id=route.query.id;
+        var email_auteur=route.query.email;
         let randomNumberlike = Math.floor(Math.random() * 500);
         let randomNumberpostule= Math.floor(Math.random() * 160);
     const copyLink=()=>{
-        alert("vous avez copier le liens")
+
+        // alert("vous avez copier le liens")
     navigator.clipboard.writeText(window.location.href);
     }
     const look_comment=(ev)=>{
@@ -46,7 +54,8 @@ export default{
     const Postuler=(ev)=>{
         ev.preventDefault()
         axios.post('http://localhost:3001/postuler',{
-            id_annonce:Id
+            id_annonce:Id,
+            email_auteur:email_auteur,
         },{withCredentials:true}
         ) .then(response=>{console.log(response) 
             alert(response.data.message)}, (err) => console.log(err.response)) 
@@ -84,7 +93,119 @@ export default{
     var profil=document.getElementById("myDialoge");
     profil.close();
    }
+
+   const est_liker = async ()=> {
+
+      return await axios.post('http://localhost:3001/est_liker',{
+          id_annonce:Id,
+        },{withCredentials:true})
+            .then(response=>{
+            console.log(response) 
+            etat.value=response.data.etat;  
+            console.log(response) 
+            if(etat.value){
+              var like=document.getElementById('like')
+              like.style.backgroundColor="pink"
+              return etat;
+            }  
+            else{
+              var like=document.getElementById('like')
+             
+              like.style.backgroundColor ="transparent"
+              return etat;
+            }
+        } , 
+        (err) => {
+            if (err.response && err.response.data) {
+
+            console.log(err.response.data)
+            } else {
+
+            console.log(err)
+            
+            }
+        })      
+    }
+
+    const liker= async ()=>{
+      var result= await est_liker()
+      console.log("voici le resultat",result.value)
+      if(result.value){
+        axios.post('http://localhost:3001/Delete_like',{
+          id_annonce:Id,       
+      },{withCredentials:true}
+        ).then(response=>{
+
+        },
+        (erro)=>{
+          console.log("erreur , il ne peut pas supprimer")
+        })
+      }
+      else{
+        axios.post('http://localhost:3001/liker',{
+          id_annonce:Id,       
+      },{withCredentials:true}
+        ).then(response=>{
+
+        },
+        (erro)=>{
+          console.log("erreur , il ne peut pas liker")
+        })
+      }
+
+   } 
+   const get_User_profil=()=>{
+    axios.post('http://localhost:3001/get_User_profil',{
+      email:route.query.email
+    },{withCredentials:true}
+    ).then(response=>{
+        infos.value=response.data.message
+        console.log("les infos ici "+ infos)
+    },(erro)=>{
+      console.log("une erreur")
+    })
+   }
+   const get_nbr_Annonce=()=>{
+    axios.post('http://localhost:3001/get_nbr_Annonce',{
+      email:route.query.email
+    },{withCredentials:true}
+    ).then(response=>{
+      nombres_annonce.value=response.data.message
+        console.log("les infos ici "+ nombres_annonce)
+    },(erro)=>{
+      console.log("une erreur")
+    })
+   }
+
+   const authentification = ()=> {
+        axios.get('http://localhost:3001/authentification',{withCredentials:true})
+            .then(response=>{
+            console.log(response)
+          // message.value=response.data.message
+          status.value=response.data.etat
+          if(status.value!=true){
+            router.push({name:'home'}) 
+          //  window.location.replace("/connexion");
+           }
+         
+        } , 
+        (err) => {
+            if (err.response && err.response.data) {
+              console.log(err.response.data)
+            alert("vous devez vous connecter")
+            } else {
+              console.log(err)
+            }
+        }) 
     
+  }
+
+   get_User_profil()
+    est_liker()
+    get_nbr_Annonce()
+    authentification()
+
+   
         return{
             open,
             lock,
@@ -99,11 +220,15 @@ export default{
             look_comments,
             hide_comment,
             look,
-
-
+            liker,
+            infos,
+            nombres_annonce          
         }
+      
+        
 
     },
+    
     
 }
 </script>
@@ -111,20 +236,33 @@ export default{
     <div>
         <div id="annonce">
               <div class="descriptions">  
-                <dialog id="myDialoge" style=" width: 600px; border: none; border-radius: 6px;">
+                <dialog id="myDialoge" style=" width: 600px; border: none; border-radius: 6px; ">
                       <div class="card-client">
-                        
-                          <svg xmlns="http://www.w3.org/2000/svg" style="margin-left: 80% ; fill: whitesmoke;cursor: pointer; "  @click="lock"  height="48" viewBox="0 -960 960 960" width="48"><path d="m249-207-42-42 231-231-231-231 42-42 231 231 231-231 42 42-231 231 231 231-42 42-231-231-231 231Z"/></svg>
+                      <h2><div style="flex: 1;">{{ infos.nom }} </div>  </h2>  
+                      <div style="flex: 1;">{{ infos.email }}</div>
+                          <svg xmlns="http://www.w3.org/2000/svg" style="margin-left: 80% ; fill: rgb(5, 5, 5);cursor: pointer; "  @click="lock"  height="48" viewBox="0 -960 960 960" width="48"><path d="m249-207-42-42 231-231-231-231 42-42 231 231 231-231 42 42-231 231 231 231-42 42-231-231-231 231Z"/></svg>
                         <div class="user-picture">
-                          <svg viewBox="0 0 448 512" xmlns="http://www.w3.org/2000/svg">
+                          <svg viewBox="0 0 448 512" xmlns="http://www.w3.org/2000/svg" style="fill:black">
                             <path d="M224 256c70.7 0 128-57.31 128-128s-57.3-128-128-128C153.3 0 96 57.31 96 128S153.3 256 224 256zM274.7 304H173.3C77.61 304 0 381.6 0 477.3c0 19.14 15.52 34.67 34.66 34.67h378.7C432.5 512 448 496.5 448 477.3C448 381.6 370.4 304 274.7 304z"></path>
                           </svg>
                         </div>
-                        <p class="name-client"> {{ $route.query.email }}
-                          <span>
-                            {{ $route.query.pseudo }}
-                          </span>
+                        <p class="name-client" style="display: flex;"> 
+                          
+                          
+                          
+                            
+                            <div style="flex: 2;">
+                               competence:  {{ infos.competence  }}
+                            </div >                                                   
+                         
+
+                            <div style="flex: 2;"> deja {{ nombres_annonce }}  annonces a son actif  </div>    
+                             
+                         
+                        
                         </p>
+
+                        
                         <div class="social-media">
                           <a href="#">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
@@ -165,6 +303,28 @@ export default{
                       <div class="author-name-prefix">Author</div>
                       <a style="margin-left: 50px;">{{ $route.query.email }}</a>
                       
+                      <div class="con-like" id="like" @click="liker">
+                          <input title="like" type="checkbox" id="like" class="like">
+                          <div class="checkmark">
+                            <svg viewBox="0 0 24 24" class="outline" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Zm-3.585,18.4a2.973,2.973,0,0,1-3.83,0C4.947,16.006,2,11.87,2,8.967a4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,11,8.967a1,1,0,0,0,2,0,4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,22,8.967C22,11.87,19.053,16.006,13.915,20.313Z"></path>
+                            </svg>
+                            <svg viewBox="0 0 24 24" class="filled" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Z"></path>
+                            </svg>
+                            <svg class="celebrate" width="100" height="100" xmlns="http://www.w3.org/2000/svg">
+                              <polygon points="10,10 20,20" class="poly"></polygon>
+                              <polygon points="10,50 20,50" class="poly"></polygon>
+                              <polygon points="20,80 30,70" class="poly"></polygon>
+                              <polygon points="90,10 80,20" class="poly"></polygon>
+                              <polygon points="90,50 80,50" class="poly"></polygon>
+                              <polygon points="80,80 70,70" class="poly"></polygon>
+                            </svg>
+                            
+                          </div>
+                          <h3>  {{ randomNumberlike }}   </h3>   
+                     </div>
+                      
                       </div>
                   </div>
 
@@ -173,15 +333,7 @@ export default{
                     <span class="title" style="margin-left: 100px;">{{ $route.query.title }}</span>
                   </header>
                   <main class="info">
-                      Lorem ipsum dolor sit amet consectetur adipisicing elit. Totam culpa fugit et nobis ea dignissimo
-                      s tempore assumenda mollitia veniam sunt nulla fugiat ipsa quo quae, fuga aut quam earum velit 
-                      praesentium exercitationem non unde repudiandae quibusdam. Perferendis, ea asperiores, 
-                      nostrum commodi ipsam velit voluptatem blanditiis illum qui odio non autem vero ut dolorum 
-                      inventore aspernatur officia corrupti dicta nam, eum porro omnis error debitis saepe! Quaerat,
-                       veritatis soluta impedit aut quos magni ducimus inventore asperiores voluptates suscipit aspernatur 
-                      
-                        
-                        
+                       {{ $route.query.description }}                       
                   </main>
                   
 
@@ -193,24 +345,9 @@ export default{
 
                    
                 </div>
-                <div >
-                                      <div id="comment">
-                                        <span > <input class="commentaires"  type="text"  style="" v-model="description" placeholder="">  <input type="submit" @click="send_commentaire" value="envoyer"></span>
-                                      </div> 
-
-                                      <p><span id='look_comment' v-if="look" @click="look_comment" style="cursor: pointer; color: blue;">voir les commentaires</span>
-                                        
-                                          <section v-if="look_comments"  >
-                                            <br>
-                                            <br><span @click="hide_comment" style="cursor: pointer; color: blue;">masquer  </span><br>
-                                            <br>
-                                            
-                                          </section>
-                                      </p> 
                   
-                 </div>   
                    
-                </div>                         
+              </div>                         
                     
                   
                     
@@ -218,11 +355,44 @@ export default{
               
             <div class="btn">
                           
-                <a href="#"   style="text-decoration: none;"> <p class="btn-postuler" @click="Postuler">  Postuler maintenant</p> </a>  
+                <a href="#"   style="text-decoration: none;"> <p class="btn-postuler" @click="Postuler">  Postuler maintenant</p> </a>   <h3>{{ randomNumberpostule }} personnes ont postuler</h3>    
                   
                 <p class="btn-postuler" @click="copyLink" > copier le liens</p>     
-                <h3>  {{ randomNumberlike }} personnes ont like  </h3>   
-                <h3>  {{ randomNumberpostule }} personnes ont Postuler  </h3>   
+          
+              
+
+                <div class="liste">
+                                      <div id="comment">
+                                        <form action="" @submit="send_commentaire">
+                                          <span > <input class="commentaires"  type="text"  style="" v-model="description" placeholder="" required>  <input type="submit"  value="envoyer"></span>
+
+                                        </form>
+                                      </div> 
+
+                                      <p><span id='look_comment' v-if="look" @click="look_comment" style="cursor: pointer; color: blue;">derouler                                      
+                                        <svg xmlns="http://www.w3.org/2000/svg" height="28" viewBox="0 -960 960 960" width="48"><path d="M480-345 240-585l43-43 197 198 197-197 43 43-240 239Z"/></svg>
+                                      </span>
+                                        
+                                          <section v-if="look_comments"  >
+                                            <br>
+                                              <section v-for="commentaire in commentaires ">
+                                                  <div id="commentaire">
+                                                      <span class="pseudo">{{ commentaire.pseudo }}</span>
+                                                      <p>
+                                                        {{ commentaire.description }}
+                                                      </p>
+                                                  </div>
+                                              </section>
+                                            <br><span @click="hide_comment" style="cursor: pointer; color: blue;">masquer                                            
+                                                  <svg xmlns="http://www.w3.org/2000/svg" height="28" viewBox="0 -960 960 960" width="58"><path d="m283-345-43-43 240-240 240 239-43 43-197-197-197 198Z"/></svg>
+                                            </span><br>
+                                            <br>
+                                            
+                                          </section>
+                                          
+                                      </p> 
+                  
+                  </div>    
             
             </div>
                      
@@ -247,16 +417,16 @@ export default{
         
     }
     .btn{
-        width: 20%;
+      
+        flex: 1;
         margin-top: 80px;
         margin-right: 50px;
         margin-left: 20px;
         text-decoration: none;
+        /* background-color: #256e9e; */
   }
     .descriptions{
-        border-right: solid rgb(20, 17, 20) 2px;
-        width: 80%;
-        margin-left:10px;
+        flex:2;
     }
     .description{
         margin-left: 100px;
@@ -268,31 +438,33 @@ export default{
       padding: 6px;
         cursor: pointer;
         height: 40px; 
-         width: 230px;
-         color: rgb(243, 243, 247);
+        color: rgb(243, 243, 247);
         background-color: rgb(24, 20, 218);
         border-radius: 7px;
         text-decoration: none;
         font-size: 22px;
+        width: 80%;
+        text-align:center;
     }
     .btn-postuler:active{
       background-color: green;
     }
 
     
-    
+    .liste{
+      /* border: #0e0e0f 2px;
+      margin: 10px; */
+    }
     #comment{
-    margin-left: 60px;
+   
     display: flex;
-    margin-top: 20px;
-    
+    margin-top: 20px; 
 }
 input[type="submit"]{
   width: 100px;
   color: whitesmoke;
   background-color: green;
   height: 40px;
-  width: 100px;
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -308,127 +480,54 @@ input[type="submit"]:active{
   transform: rotate(45deg);
 }
 .commentaires{
-    width: 300px;
     border: solid rgb(84, 125, 138); 
-    height: 50px;
+    height: 40px;
     border-radius: 5px;
     font-size: 24px;
+    width: 70%;
 }
     p{
         font-size: 21px;
        
     }
-   
+   #commentaire{
+    margin-top: 9px;
+    background-color: #fff;
+    display: block;
+    margin-bottom: 80x;
+    margin-left: 50px;
+    border-radius: 0.5rem;
+    border: solid rgb(230, 230, 221) 1px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 
+   }
+   .pseudo{
+    margin: 12px;
+    border: solid rgb(197, 197, 193) 1px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 
-.con-like {
-  --red: #ee427b;
-  position: relative;
-  width: 50px;
-  height: 50px;
-}
-
-.con-like .like {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
-  z-index: 20;
-  cursor: pointer;
-}
-
-.con-like .checkmark {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.con-like .outline,
-.con-like .filled {
-  fill: var(--red);
-  position: absolute;
-}
-
-.con-like .filled {
-  animation: kfr-filled 0.5s;
-  display: none;
-}
-
-.con-like .celebrate {
-  position: absolute;
-  animation: kfr-celebrate 0.5s;
-  animation-fill-mode: forwards;
-  display: none;
-}
-
-.con-like .poly {
-  stroke: var(--red);
-  fill: var(--red);
-}
-
-.con-like .like:checked ~ .checkmark .filled {
-  display: block
-}
-
-.con-like .like:checked ~ .checkmark .celebrate {
-  display: block
-}
-
-@keyframes kfr-filled {
-  0% {
-    opacity: 0;
-    transform: scale(0);
-  }
-
-  50% {
-    opacity: 1;
-    transform: scale(1.2);
-  }
-}
-
-@keyframes kfr-celebrate {
-  0% {
-    transform: scale(0);
-  }
-
-  50% {
-    opacity: 0.8;
-  }
-
-  100% {
-    transform: scale(1.2);
-    opacity: 0;
-    display: none;
-  }
-}
-
-#coeur{
-    margin-left: 80%;
-}
-
-
+   }
 /* ici les infos */
 
 .card {
-  margin-top: 100px;
+  margin-top: 40px;
+  margin-left: 30px;
+  margin-bottom: 200px;
   display: flex;
   position: relative;
   flex-direction: column;
-  height: 600px;
-  width: 790px;
+  min-height: auto;
   min-width: 250px;
-  padding: 1rem;
   border-radius: 16px;
   box-shadow: -1rem 0 3rem #00000067;
   transition: .2s;
   font-family: 'Inter', sans-serif;
-  margin-left: 40px;
 }
 
 .info{
-  font-size: 14px;
+  text-align: center;
+  color: #11040e;
+  font-size: 17px;
   padding: 20px;
   padding-bottom: 80px;
   font-family: 'Dosis', sans-serif;
@@ -437,10 +536,11 @@ input[type="submit"]:active{
 	max-height: 80%;
   height: auto;
   min-height: 30%;
-	background-color: #5783bd;
 	margin-left: 60px;
-	border-radius: 4px;
-	box-shadow: 4px -4px 0 rgb(204, 201, 201);
+	border-radius: 8px;
+  border: solid rgb(230, 230, 221) 2px;
+box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
 }
 .info:hover{
 	transform: scale(1.01);
@@ -527,8 +627,6 @@ input[type="submit"]:active{
   color: #0e0e0f;
   text-transform: uppercase;
   font-size: 16px;
-  /* border: 3px solid #28242f; */
-  /* border-radius: 2rem; */
   padding: .2rem .85rem .25rem;
   position: relative;
   text-decoration: none;
@@ -547,18 +645,15 @@ input[type="submit"]:active{
 /* pop-up */
 
 .card-client {
-  background: #256e9e;
   width: 90%;
   padding-top: 25px;
   padding-bottom: 25px;
-  /* text-align: center; */
   margin-left: 20px;
-  /* padding-right: 20px; */
-  border: 4px solid #7cdacc;
+  padding-right: 20px;
   box-shadow: 0 6px 10px rgba(207, 212, 222, 1);
   border-radius: 10px;
   text-align: center;
-  color: #fff;
+  color: #050505;
   font-family: "Poppins", sans-serif;
   transition: all 0.3s ease;
 }
@@ -570,7 +665,7 @@ input[type="submit"]:active{
   object-fit: cover;
   width: 5rem;
   height: 5rem;
-  border: 4px solid #7cdacc;
+  border: 4px solid #070707;
   border-radius: 999px;
   display: flex;
   justify-content: center;
@@ -637,6 +732,92 @@ input[type="submit"]:active{
   transform: translate(-50%, -90%);
   transition: all 0.2s ease;
   z-index: 1;
+}
+/**like */
+
+.con-like {
+  --red: #ee427b;
+  position: relative;
+  width: 50px;
+  height: 50px;
+  float: right;
+  margin: 50px;
+}
+
+.con-like .like {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  z-index: 20;
+  cursor: pointer;
+}
+
+.con-like .checkmark {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.con-like .outline,
+.con-like .filled {
+  fill: var(--red);
+  position: absolute;
+}
+
+.con-like .filled {
+  animation: kfr-filled 0.5s;
+  display: none;
+}
+
+.con-like .celebrate {
+  position: absolute;
+  animation: kfr-celebrate 0.5s;
+  animation-fill-mode: forwards;
+  display: none;
+}
+
+.con-like .poly {
+  stroke: var(--red);
+  fill: var(--red);
+}
+
+.con-like .like:checked ~ .checkmark .filled {
+  display: block
+}
+
+.con-like .like:checked ~ .checkmark .celebrate {
+  display: block
+}
+
+@keyframes kfr-filled {
+  0% {
+    opacity: 0;
+    transform: scale(0);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+@keyframes kfr-celebrate {
+  0% {
+    transform: scale(0);
+  }
+
+  50% {
+    opacity: 0.8;
+  }
+
+  100% {
+    transform: scale(1.2);
+    opacity: 0;
+    display: none;
+  }
 }
 
 </style>

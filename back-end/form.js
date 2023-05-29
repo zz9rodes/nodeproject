@@ -255,6 +255,7 @@ app.get('/List_Annonce',auth,(req,res)=>{
 
 app.post('/postuler',(req,res)=>{
 	var id_annonce=req.body.id_annonce;
+	var email_auteur=req.body.email_auteur
 	var currentDate=new Date();
 	var date=currentDate.toString();
 	
@@ -265,33 +266,38 @@ app.post('/postuler',(req,res)=>{
 			res.send({message:"desole un probleme est survenu en haut",statut:false})
 		}
 		else{
-
-			conn.query(`select * from postuler where id_annonce=${id_annonce} and email_personne='${req.cookies.email}'`,(erreur,resultat)=>{
-				if(erreur){
-					console.log(erreur)
-				}else{
-					if(resultat.length>0){
-						res.send({message:"il est possible que vous avez deja postuler pour cette annonce  ",statut:false})
-					}
-					else{
-						var email=req.cookies.pseudo;
-						// console.log(req.cookies.pseudo);
-
-						try{
-							if(req.cookies && req.cookies.email&&req.cookies.pseudo){
-							conn.query (`insert into postuler(id_Annonce,email_personne,pseudo_personne,dates) values("${id_annonce}", "${req.cookies.email}", "${req.cookies.pseudo}","${date}")`);
-							console.log("l'ajout a bien ete effectuer !:) ")
-							res.send({message:`votre demande a bien ete envoyer `,statut:true}) 
+			if(email_auteur==req.cookies.email){
+				res.send({message:"impossible pour vous de postuler pur cette annonce"})
+			}
+			else{
+				conn.query(`select * from postuler where id_annonce=${id_annonce} and email_personne='${req.cookies.email}'`,(erreur,resultat)=>{
+					if(erreur){
+						console.log(erreur)
+					}else{
+						if(resultat.length>0){
+							res.send({message:"il est possible que vous avez deja postuler pour cette annonce  ",statut:false})
 						}
-							}catch(erro){			
-							res.send({message:"desole un probleme est survenu  veillez recommencer plutard ",statut:false})
+						else{
+							var email=req.cookies.pseudo;
+							// console.log(req.cookies.pseudo);
+	
+							try{
+								if(req.cookies && req.cookies.email&&req.cookies.pseudo){
+								conn.query (`insert into postuler(id_Annonce,email_personne,pseudo_personne,dates) values("${id_annonce}", "${req.cookies.email}", "${req.cookies.pseudo}","${date}")`);
+								console.log("l'ajout a bien ete effectuer !:) ")
+								res.send({message:`votre demande a bien ete envoyer `,statut:true}) 
+							}
+								}catch(erro){			
+								res.send({message:"desole un probleme est survenu  veillez recommencer plutard ",statut:false})
+							}
 						}
 					}
-				}
-
-				
-				
-			})
+	
+					
+					
+				})
+			}
+			
 			
 		  	
 		}
@@ -305,15 +311,12 @@ app.post('/commentaire',(req,res)=>{
 	var description=req.body.description;
 	var currentDate=new Date();
 	var date=currentDate.toString();
-	
-	
 	req.getConnection((erro,conn)=>{
 		if(erro){
 			console.log("erreur d'envoi de requette"+erro.message)
 			res.send({message:"desole un probleme est survenu en haut",statut:false})
 		}
 		else{
-
 			conn.query(`select * from commentaire where id_annonce=${id_annonce} and email_personne='${req.cookies.email}'`,(erreur,resultat)=>{
 				if(erreur){
 					console.log(erreur)
@@ -324,13 +327,19 @@ app.post('/commentaire',(req,res)=>{
 					}
 					else{
 						var email=req.cookies.pseudo;
-								
-			
-						try{
+							try{
 								if(req.cookies && req.cookies.email&&req.cookies.pseudo){
-								conn.query (`insert into commentaire(id_Annonce,email_Personne,pseudo_personne,dates,description) values(${id_annonce}, "${req.cookies.email}", "${req.cookies.pseudo}","${date}","${description}")`);
-								console.log("l'ajout a bien ete effectuer !:) ")
-								res.send({message:`votre commentaire a bien ete envoyer !`,statut:true}) 
+								conn.query (`insert into commentaires (id_Annonce,email_Personne,pseudo_personne,dates,description) values (${id_annonce}, "${req.cookies.email}", "${req.cookies.pseudo}","${date}","${description}")`,(er,result)=>{
+										if(er){
+											res.send({message:"vous avez deja commenter cette Annonce"})
+										}
+										else{
+
+											console.log("l'ajout a bien ete effectuer !:) ")
+											res.send({message:`votre commentaire a bien ete envoyer !`,statut:true}) 
+										}
+								});
+								
 							}
 							}catch(erro){	
 										console.log(erro.message)		
@@ -358,7 +367,7 @@ app.post('/List_commentaire',(req,res)=>{
 		}
 		else{
 			try{
-					conn.query(`select * from commentaire where id_annonce="${id_Annonce}" `,(erreur,resultat)=>{
+					conn.query(`select * from commentaires where id_annonce="${id_Annonce}" `,(erreur,resultat)=>{
 						if(erreur){
 							console.log('erreur de connexion');
 							res.status(422).send({message:"erreur de connexion",status:false})
@@ -373,7 +382,7 @@ app.post('/List_commentaire',(req,res)=>{
 										email: resultat[i].email_Personne,
 										pseudo: resultat[i].pseudo_personne,
 										description: resultat[i].description,
-										date: resultat[i].dates,
+										date: (resultat[i].dates).substring(3,20),
 									}
 									tableau.push(commentaire);
 								}
@@ -687,11 +696,257 @@ app.post('/reinisalise_password',(req,res)=>{
 			}
 		  	
 		}
+
 	})
 
 })
 
+app.post('/delete_annonce',(req,res)=>{
+	var id=req.body.id_annonce
+	if(id!='' ||id!=undefined){
+		req.getConnection((erro,conn)=>{
+			if(erro){
+				console.log(erro)
+				res.send({message:'ereur de connexion',statut:false})
+			}
+			else{
+				conn.query(`delete  from annonces  where annonces.id = ${id}`,(eror,resultat)=>{
+					if(eror){
+						console.log(eror)
+						res.send({message:"impossible de suprimer cet 'Annonce"})
+					}
+					else{
+							console.log(resultat+"elements ont ete supprimer ")
+							res.send({message:"sppression effectuer avec succes"})
+					}
+					  
+				})
+			}
+		})
+	}
+	else{
+		res.send({message:"aucune annonce n'as ete envoyer"})
+	}
+})
 
+app.post('/delete_query',(req,res)=>{
+	var id=req.body.id_annonce
+	console.log('voici lemail'+req.cookies.email)
+	if(id!='' && id!=undefined && req.cookies){
+		req.getConnection((erro,conn)=>{
+			if(erro){
+				console.log(erro)
+				res.send({message:'ereur de connexion',statut:false})
+			}
+			else{
+				conn.query(`delete  from postuler  where postuler.id_Annonce = ${id} and postuler.email_Personne='${req.cookies.email}'`,(eror,resultat)=>{
+					if(eror){
+						console.log(eror)
+						res.send({message:"impossible de suprimer cet 'Annonce"})
+					}
+					else{
+							console.log(resultat+"elements ont ete supprimer ")
+							res.send({message:"sppression effectuer avec succes"})
+					}
+					  
+				})
+			}
+		})
+	}
+	else{
+		res.send({message:"aucune annonce n'as ete envoyer"})
+	}
+})
+
+app.post('/est_liker',(req,res)=>{
+	var id=req.body.id_annonce
+	if(req.cookies && req.cookies.email){
+		req.getConnection((err,conn)=>{
+				conn.query(`select * from likes where email_personne='${req.cookies.email}' and id_annonce=${id}`,(err,result)=>{
+					if(err){
+						res.send({message:'erreur de connexion',statut:false})
+					}
+					else{
+						if(result.length>0){
+							console.log("true")
+							res.send({etat:true})
+						}
+						else{
+							console.log("false")
+							res.send({etat:false})
+						}
+					}
+				})
+		})
+	}
+})
+
+app.post('/liker',(req,res)=>{
+	var id_annonce=req.body.id_annonce;
+	console.log(id_annonce,req.cookies.email)
+
+	if(id_annonce!="" && req.cookies.email){
+		req.getConnection((err,conn)=>{
+
+			if(err){
+				console.log('impossible probleme de reseau')
+				res.send({message:'erreur de connexion',statut:false})
+			}
+			else{
+				
+					conn.query(`insert into likes (id_annonce,email_personne) values(${id_annonce},'${req.cookies.email}') `,(erreur,resulta)=>{
+						if(erreur){
+							console.log('impossible' +erreur)
+							res.send({message:'impossible',statut:false})
+						}
+						else{
+							console.log('vous avez liker cette annonce')
+							res.send({message:'vous avez liker cette annonce',statut:true})
+						}
+					})
+					
+			}
+		})
+	}
+})
+app.post('/Delete_like',(req,res)=>{
+	var id_annonce=req.body.id_annonce;
+	console.log(id_annonce,req.cookies.email)
+
+	if(id_annonce!="" && req.cookies.email){
+		req.getConnection((err,conn)=>{
+
+			if(err){
+				console.log('impossible probleme de reseau')
+				res.send({message:'erreur de connexion',statut:false})
+			}
+			else{
+				
+					conn.query(`Delete from  likes where id_annonce=${id_annonce} and email_personne='${req.cookies.email}' `,(erreur,resulta)=>{
+						if(erreur){
+							console.log('impossible' +erreur)
+							res.send({message:'impossible',statut:false})
+						}
+						else{
+							console.log('vous avez supprimer ce like')
+							res.send({message:'vous avez liker cette annonce',statut:true})
+						}
+					})
+					
+			}
+		})
+	}
+})
+
+app.post('/get_User_profil',(req,res)=>{
+	var email=req.body.email;
+	console.log("l'email ici 1"+email)
+
+	req.getConnection((erro,conn)=>{
+			if(erro){
+				console.log("l'email ici 2 "+email)
+				res.send({message:"erreur de connexion" ,statut:false})
+			}
+			else{
+				console.log("l'email ici  3"+email)
+				conn.query(`select * from personne where email='${email}'`,(err,result)=>{
+					if(err){
+						res.send({message:'erreur',statut:false})
+					}
+					else{
+						console.log("l'email ici  4"+email)
+						if(result.length>0){
+							let infos
+								infos={
+									email:result[0].email,
+									nom:result[0].nom,
+									competence:result[0].competence,
+								}
+													
+								console.log("les infos ici   "+infos.email)
+								res.send({message:infos,statut:true})
+							
+						}
+					}
+				})
+			}
+	})
+})
+app.post('/get_nbr_Annonce',(req,res)=>{
+	var email=req.body.email;
+	console.log("l'email ici 1"+email)
+
+	req.getConnection((erro,conn)=>{
+			if(erro){
+				console.log("l'email ici 2 "+email)
+				res.send({message:"erreur de connexion" ,statut:false})
+			}
+			else{
+				console.log("l'email ici  3"+email)
+				conn.query(`select count(*) as nbr from annonces where email_personne='${email}'`,(err,result)=>{
+					if(err){
+						res.send({message:'erreur',statut:false})
+					}
+					else{
+						console.log("l'email ici  4"+email)
+						if(result.length>0){
+							let nombres_annonce
+
+							nombres_annonce=result[0].nbr
+									
+								
+													
+								console.log("les infos ici   "+nombres_annonce)
+								res.send({message:nombres_annonce,statut:true})
+							
+						}
+					}
+				})
+			}
+	})
+})
+
+app.post('/Update_Annonce',(req,res)=>{
+	var titre=req.body.titre_annonce;
+	var description=req.body.description_annonce;
+	var domaine=req.body.domaine_annonce;
+	var budget=req.body.budget_annonce;
+	var id=req.body.id_annonce;
+	
+
+	req.getConnection((erro,conn)=>{
+	
+		if(erro){
+			console.log("erreur d'envoi de requette"+erro.message)
+			res.send({message:"desole un probleme est survenu en haut",statut:false})
+		}
+		else{
+			
+			try{
+			
+				if(req.cookies && req.cookies.email){
+				conn.query (`update  annonces set titre='${titre}',desription='${description}',domaine='${domaine}',budget=${budget} where id=${id} ")`,(err,resulta)=>{
+					if(err){
+						res.send({message:"impossibles de modifier cette annonce pour le momment"})
+					}
+					else{
+						console.log("l'ajout a bien ete effectuer !:) ")
+						res.send({message:"votre annonce a bien ete modifier ",statut:true}) 
+					
+					}
+				});
+				console.log("l'ajout a bien ete effectuer !:) ")
+				res.send({message:"votre annonce a bien ete modifier ",statut:true}) 
+			}
+				}catch(erro){
+				console.log(erro);
+				res.send({message:"desole un probleme est survenu  en bas ",statut:false})
+			}
+		  	
+		}
+	})
+	
+})
 
 app.listen(3001);
 console.log('le serveur tourne sur le port 3001 ')

@@ -134,7 +134,6 @@ import { useRouter, useRoute } from 'vue-router'
   font-family:'Lucida Sans Regular', 'Lucida Grande', Geneva, Verdana;
 }
 .form {
-margin-top: 100px;
 margin-left: 50px;
 background-color: #fff;
 display: block;

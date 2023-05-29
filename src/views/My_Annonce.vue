@@ -1,6 +1,6 @@
 <script>
 	 import axios from 'axios'
-     import { ref } from 'vue';
+  import { onUpdated, ref } from 'vue';
      import { RouterLink, RouterView } from 'vue-router'
      import { useRouter, useRoute } from 'vue-router'
 	export default{
@@ -8,6 +8,14 @@
     const route = useRouter()
     var Annonces=ref([]);
     var status=ref()
+    var message=ref('')
+    var response_updating=ref('')
+    var titre=ref('');
+    var description=ref('');
+		var budget=ref('');
+		var domaine=ref('');
+    var id=ref('')
+
 	const  list_Annonce=()=>{
                 axios.get('http://localhost:3001/list_My_annoce', {withCredentials:true})
         .then(response=>{console.log(response) 
@@ -48,12 +56,76 @@
         }) 
         
   } 
+  const Function=(id_annonce)=> {
+		var x = document.getElementById('Dialog'+id_annonce);
+      		var y = document.getElementById('Dialog'+id_annonce);
+      x.showModal('animalNotChosen');
+    }
+
+  const Delete=(id)=>{
+      var result=confirm("voulez vous vraiment supprimer ?")
+      if(result==true){
+
+        axios.post("http://localhost:3001/delete_annonce", {
+              id_annonce: id,
+            }, { withCredentials: true })
+                .then(response => {
+                console.log(response); 
+                message.value=response.data.message;
+                location.reload()    
+              },
+            (err) => 
+              // console.log(err.response.data)
+              console.log('error  '+err)
+            );
+      }
+      else{
+
+      }
+            
+  }
+
+
+  const fonction=(id_annonce)=>{
+		var x = document.getElementById('Dialog'+id_annonce);
+      	x.close('animalNotChosen');
+        id.value=id_annonce
+        console.log("voici l'id de l'annonce "+id_annonce)
+    }
+
+   const Update_annonce=(ev)=>{ 
+       v.preventDefault()
+       axios.post('http://localhost:3001/authentification',{
+        id_annonce:Annonce.id,
+        titre_annonce:Annonce.titre,
+        domaine_annonce:Annonce.domaine,
+        budget_annoce:Annonce.budget,
+        description_annonce:Annonce.description,
+       },{withCredentials:true}).then(
+        (response=>{
+            response_updating.value=response.data.message
+        }),(err=>{
+
+        })
+       )
+   } 
     list_Annonce()
     authentification()
+   
 	
 	return{
-        Annonces
-    }
+    fonction,
+    message,
+    Annonces,
+    Delete,
+    Function,
+    titre,
+    domaine,
+    description,
+    budget,
+    Update_annonce
+   
+  }
 }
 		
 	}
@@ -64,36 +136,86 @@
         <h1 style="text-align: center;">your   posts </h1>
     <ul>  
       <div  id="ligne">
+        <div class=" titre">N-0</div>
           <div class=" titre">titre</div>
           <div class=" titre"> domaine</div>
           <div class=" titre"> budget (fcfa)</div>
           <div class=" titre"> date</div>
-          <div class=" titre"> allez vers</div>
+          <div class=" titre"> voire</div>
           <div class=" titre"> modifier</div>
           <div class=" titre suprimer"> suprimer</div>
           <div class=" titre"> propositions</div>
       </div>
          
         <div v-for="Annonce in Annonces"   class="boucle " id="ligne">
-          <div class="ele">{{Annonce.titre}} </div>
+                <dialog :id="'Dialog'+Annonce.id" >
+			<div class="form-title">Mofifier l'annonce  
+			
+			</div>
+    		<form class="form" @submit="Update_annonce">
+				<div class="input">
+					    
+         
+					<div class="input-container" hidden>
+            <label  >ID</label><br>
+					  <input placeholder="title" type="text" v-model="Annonce.id"  required>
+					
+					</div>
+          <label  >titre de l'annonce</label><br>
+					<div class="input-container">
+					  <input placeholder="title" type="text" v-model="Annonce.titre"   required>
+					
+					</div>
+
+          <label  >description de l'anoce</label><br>
+					<div class="input-container">
+					<input s="desciption" type="description" v-model="Annonce.description" required id="description">
+
+         
+					</div>
+					<div class="input-container">
+            <label  >budget de l'annonce</label><br>
+					<input placeholder="entrer le budget" type="number" v-model="Annonce.budget" required>
+
+         
+					</div>
+          <label for="ID" >domaine de l'annonce</label><br>
+					<div class="input-container">
+					<input placeholder="domaine " type="text" v-model="Annonce.domaine" required>
+
+					
+					</div>
+         		
+						<button class="submit" type="submit" >
+						post
+						</button>
+						<button class="reset" type="reset" @click="fonction(Annonce.id)">
+						annuler
+						</button>
+				</div>	
+				
+        		
+			</form>
+			
+
+  		          </dialog>
+          <div class="ele">{{Annonce.id}}  </div>
+          <div class="ele">{{Annonce.titre}}  </div>
           <div class="ele"> {{Annonce.domaine}}</div>
           <div class="ele"> {{Annonce.budget}} Fcfa</div>
           <div class="ele"> {{Annonce.date.substring(0.25)}}</div>
           <div class="ele"> 
             <RouterLink :to="'/postuler?title=' + Annonce.titre+'&id='+Annonce.id+'&description='+Annonce.description+'&budget='+Annonce.budget+'&date='+Annonce.date+'&domaine='+Annonce.domaine" style="text-decoration: none;"> 
                 
-<svg xmlns="http://www.w3.org/2000/svg" height="28" class="view" viewBox="0 -960 960 960" width="48"><path d="M480.118-330Q551-330 600.5-379.618q49.5-49.617 49.5-120.5Q650-571 600.382-620.5q-49.617-49.5-120.5-49.5Q409-670 359.5-620.382q-49.5 49.617-49.5 120.5Q310-429 359.618-379.5q49.617 49.5 120.5 49.5Zm-.353-58Q433-388 400.5-420.735q-32.5-32.736-32.5-79.5Q368-547 400.735-579.5q32.736-32.5 79.5-32.5Q527-612 559.5-579.265q32.5 32.736 32.5 79.5Q592-453 559.265-420.5q-32.736 32.5-79.5 32.5ZM480-200q-146 0-264-83T40-500q58-134 176-217t264-83q146 0 264 83t176 217q-58 134-176 217t-264 83Zm0-300Zm-.169 240Q601-260 702.5-325.5 804-391 857-500q-53-109-154.331-174.5-101.332-65.5-222.5-65.5Q359-740 257.5-674.5 156-609 102-500q54 109 155.331 174.5 101.332 65.5 222.5 65.5Z"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" height="28" class="view" viewBox="0 -960 960 960" width="48"><path d="M480.118-330Q551-330 600.5-379.618q49.5-49.617 49.5-120.5Q650-571 600.382-620.5q-49.617-49.5-120.5-49.5Q409-670 359.5-620.382q-49.5 49.617-49.5 120.5Q310-429 359.618-379.5q49.617 49.5 120.5 49.5Zm-.353-58Q433-388 400.5-420.735q-32.5-32.736-32.5-79.5Q368-547 400.735-579.5q32.736-32.5 79.5-32.5Q527-612 559.5-579.265q32.5 32.736 32.5 79.5Q592-453 559.265-420.5q-32.736 32.5-79.5 32.5ZM480-200q-146 0-264-83T40-500q58-134 176-217t264-83q146 0 264 83t176 217q-58 134-176 217t-264 83Zm0-300Zm-.169 240Q601-260 702.5-325.5 804-391 857-500q-53-109-154.331-174.5-101.332-65.5-222.5-65.5Q359-740 257.5-674.5 156-609 102-500q54 109 155.331 174.5 101.332 65.5 222.5 65.5Z"/></svg>
             </RouterLink>
           </div>
           <div class="ele">
-                
-
-            <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="48"><path d="M180-180h44l443-443-44-44-443 443v44Zm614-486L666-794l42-42q17-17 42-17t42 17l44 44q17 17 17 42t-17 42l-42 42Zm-42 42L248-120H120v-128l504-504 128 128Zm-107-21-22-22 44 44-22-22Z"/></svg>          </div>
+                <svg xmlns="http://www.w3.org/2000/svg"  @click="()=>Function(Annonce.id)" height="24" viewBox="0 -960 960 960" width="48"><path d="M180-180h44l443-443-44-44-443 443v44Zm614-486L666-794l42-42q17-17 42-17t42 17l44 44q17 17 17 42t-17 42l-42 42Zm-42 42L248-120H120v-128l504-504 128 128Zm-107-21-22-22 44 44-22-22Z"/></svg>          </div>
+               
           <div class="ele">
-            <RouterLink :to="'/list_prposition?title=' + Annonce.titre+'&id='+Annonce.id+'&description='+Annonce.description+'&budget='+Annonce.budget+'&date='+Annonce.date+'&domaine='+Annonce.domaine" style="text-decoration: none;"> 
                   
-<svg xmlns="http://www.w3.org/2000/svg" height="26" viewBox="0 -960 960 960" width="48"><path d="M295.615-160q-22.442 0-38.913-16.471-16.471-16.471-16.471-38.913v-518.462H200v-30.77h154.154v-26.154h251.692v26.154H760v30.77h-40.231v518.462q0 23.057-16.163 39.221Q687.443-160 664.385-160h-368.77ZM689-733.846H271v518.462q0 10.769 7.308 17.692 7.307 6.923 17.307 6.923h368.77q9.231 0 16.923-7.692Q689-206.154 689-215.384v-518.462ZM395.461-273.692h30.77v-378.231h-30.77v378.231Zm138.308 0h30.77v-378.231h-30.77v378.231ZM271-733.846v543.077-543.077Z"/></svg>
-            </RouterLink>
+              <svg xmlns="http://www.w3.org/2000/svg" @click="()=>Delete(Annonce.id)" style="cursor: pointer;" height="26" viewBox="0 -960 960 960" width="48"><path d="M295.615-160q-22.442 0-38.913-16.471-16.471-16.471-16.471-38.913v-518.462H200v-30.77h154.154v-26.154h251.692v26.154H760v30.77h-40.231v518.462q0 23.057-16.163 39.221Q687.443-160 664.385-160h-368.77ZM689-733.846H271v518.462q0 10.769 7.308 17.692 7.307 6.923 17.307 6.923h368.77q9.231 0 16.923-7.692Q689-206.154 689-215.384v-518.462ZM395.461-273.692h30.77v-378.231h-30.77v378.231Zm138.308 0h30.77v-378.231h-30.77v378.231ZM271-733.846v543.077-543.077Z"/></svg>
           </div>
           <div class="ele">
             <RouterLink :to="'/list_proposition?title=' + Annonce.titre+'&id='+Annonce.id+'&description='+Annonce.description+'&budget='+Annonce.budget+'&date='+Annonce.date+'&domaine='+Annonce.domaine" style="text-decoration: none;"> 
@@ -102,6 +224,8 @@
           </div>
         </div>
     </ul>
+
+      
       
     </div>
 </template>
@@ -121,6 +245,9 @@
   width: 90%;
   border-radius: 7px;
 
+}
+label{
+  font-weight: bold;
 }
 
 .titre{
@@ -165,4 +292,134 @@
   fill: rgb(243, 247, 243);
   margin-left: 50px;
 }
+
+/* Update annonce */
+
+
+.form {
+	display: flex;
+	background-color: #fff;
+	display: flex;
+	flex-direction:row ;
+	/* padding: 1rem; */
+  width: 90%;
+	box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
+}
+.input{
+	flex:3;
+  text-align: center;
+  
+}
+
+.form-title  {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  font-weight: 600;
+  text-align: center;
+  /* margin-bottom: 20px; */
+  color: #000;
+}
+.help{
+	margin-left: 30px;
+	flex: 2;
+}
+
+.input-container {
+  position: relative;
+ 
+  
+}
+
+
+.input-container input, .form button {
+  outline: none;
+  border: 1.3px solid #e6e8ee;
+  margin: 8px 0;
+}
+
+.input-container input {
+  background-color: #fff;
+  padding: 1rem;
+  padding-right: 3rem;
+  font-size: 22px;
+  line-height: 1.25rem;
+  width: 80%;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.input-container span {
+  display: grid;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  place-content: center;
+}
+
+.input-container span svg {
+  color: #9CA3AF;
+  width: 1rem;
+  height: 1rem;
+}
+dialog{
+  border-radius: 7px;
+  border: none;
+  margin-left: 34%;
+  
+  width: 40%;
+}
+
+.submit:active,.reset:active{
+	background-color: aliceblue;
+	color: #2f0a75;
+}
+.submit {
+  display: block;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+  background-color: #0db33f;
+  color: #ffffff;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 500;
+  width: 80%; 
+  border-radius: 0.5rem;
+  text-transform: uppercase;
+  cursor: pointer;
+  
+}
+.reset {
+  display: block;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+  background-color: #e24a1c;
+  color: #ffffff;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 500;
+   width: 80%; 
+  border-radius: 0.5rem;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+#description{
+	min-height: 100px;
+}
+.ferme{
+	margin-left: 80%;
+	cursor: pointer;
+}
+
+
+
+
 </style>

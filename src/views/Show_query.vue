@@ -1,11 +1,14 @@
 <script>
 	 import axios from 'axios'
      import { ref } from 'vue';
+     import { useRouter, useRoute } from 'vue-router'
      import { RouterLink, RouterView } from 'vue-router'
 	export default{
 	setup(){
-	
+    const route = useRouter()
     var Querys=ref([]);
+    var message=ref('')
+    var status=ref()
 	const  list_Query=()=>{
                 axios.get('http://localhost:3001/list_Query', {withCredentials:true})
         .then(response=>{console.log(response) 
@@ -25,9 +28,60 @@
 
     }   
     list_Query()
+    /**authentification */
+    const authentification = ()=> {
+        axios.get('http://localhost:3001/authentification',{withCredentials:true})
+            .then(response=>{
+            console.log(response)
+          // message.value=response.data.message
+          status.value=response.data.etat
+          if(status.value!=true){
+            route.push({name:'home'}) 
+          
+           }
+         
+        } , 
+        (err) => {
+            if (err.response && err.response.data) {
+              console.log(err.response.data)
+            alert("vous devez vous connecter")
+            } else {
+              console.log(err)
+            }
+        }) 
+        
+  } 
+
+
+    const Delete=(id)=>{
+      var result=confirm("voulez vous vraiment supprimer ?")
+      if(result==true){
+
+        axios.post("http://localhost:3001/delete_query", {
+              id_annonce: id,
+            }, { withCredentials: true })
+                .then(response => {
+                console.log(response); 
+                message.value=response.data.message;
+                location.reload()    
+              },
+            (err) => 
+              // console.log(err.response.data)
+              console.log('error  '+err)
+            );
+      }
+      else{
+
+      }
+            
+  }
+
+  authentification()
 	
 	return{
-        Querys
+        Querys,
+        Delete,
+        message
     }
 }
 		
@@ -42,8 +96,8 @@
           <div class=" titre">titre</div>
           <div class=" titre"> domaine</div>
           <div class=" titre"> budget (fCfa)</div>
-          <!-- <div class=" titre"> dates</div> -->
           <div class=" titre"> auteur</div>
+            <div class=" titre"> dates</div>
           <div class=" titre"> suprimer</div>
       </div>
          
@@ -57,8 +111,9 @@
               @{{ Query.nom }}
             </RouterLink>
           </div>
+          <div class="ele"> {{Query.date}} </div>
           <div class="ele">
-                  <svg xmlns="http://www.w3.org/2000/svg"  height="38" viewBox="0 -960 960 960" width="48"><path d="M295.615-160q-22.442 0-38.913-16.471-16.471-16.471-16.471-38.913v-518.462H200v-30.77h154.154v-26.154h251.692v26.154H760v30.77h-40.231v518.462q0 23.057-16.163 39.221Q687.443-160 664.385-160h-368.77ZM689-733.846H271v518.462q0 10.769 7.308 17.692 7.307 6.923 17.307 6.923h368.77q9.231 0 16.923-7.692Q689-206.154 689-215.384v-518.462ZM395.461-273.692h30.77v-378.231h-30.77v378.231Zm138.308 0h30.77v-378.231h-30.77v378.231ZM271-733.846v543.077-543.077Z"/></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg"  @click="()=>Delete(Query.id)" style="cursor: pointer; margin-left: 20px;"  height="38" viewBox="0 -960 960 960" width="48"><path d="M295.615-160q-22.442 0-38.913-16.471-16.471-16.471-16.471-38.913v-518.462H200v-30.77h154.154v-26.154h251.692v26.154H760v30.77h-40.231v518.462q0 23.057-16.163 39.221Q687.443-160 664.385-160h-368.77ZM689-733.846H271v518.462q0 10.769 7.308 17.692 7.307 6.923 17.307 6.923h368.77q9.231 0 16.923-7.692Q689-206.154 689-215.384v-518.462ZM395.461-273.692h30.77v-378.231h-30.77v378.231Zm138.308 0h30.77v-378.231h-30.77v378.231ZM271-733.846v543.077-543.077Z"/></svg>
           </div>
         </div>
     </ul>

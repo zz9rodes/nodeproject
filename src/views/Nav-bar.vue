@@ -63,7 +63,7 @@
 
 		}
 		else{
-			location.reload()
+		
 		}
 
     }
@@ -160,7 +160,7 @@
 			</form>
 			
 
-  </dialog>
+  		</dialog>
 		
     </div>
 </template>

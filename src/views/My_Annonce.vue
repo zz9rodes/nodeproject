@@ -12,9 +12,9 @@
     var response_updating=ref('')
     var titre=ref('');
     var description=ref('');
-		var budget=ref('');
+		var budget=ref();
 		var domaine=ref('');
-    var id=ref('')
+    var id=ref()
 
 	const  list_Annonce=()=>{
                 axios.get('http://localhost:3001/list_My_annoce', {withCredentials:true})
@@ -56,9 +56,16 @@
         }) 
         
   } 
-  const Function=(id_annonce)=> {
-		var x = document.getElementById('Dialog'+id_annonce);
-      		var y = document.getElementById('Dialog'+id_annonce);
+  const Function=(id_annonce,titre_annonce,budget_annoce,description_annonce,domaine_annonce)=> {
+		var x = document.getElementById('Dialog');
+
+      		var y = document.getElementById('Dialog');
+          titre.value=titre_annonce;
+          id.value=id_annonce;
+          domaine.value=domaine_annonce;
+          description.value=description_annonce;
+          budget.value=budget_annoce;
+        console.log("titre "+titre_annonce+" description "+description_annonce)
       x.showModal('animalNotChosen');
     }
 
@@ -86,24 +93,27 @@
   }
 
 
-  const fonction=(id_annonce)=>{
-		var x = document.getElementById('Dialog'+id_annonce);
+  const fonction=()=>{
+		var x = document.getElementById('Dialog');
       	x.close('animalNotChosen');
-        id.value=id_annonce
-        console.log("voici l'id de l'annonce "+id_annonce)
+        console.log("voici l'id de l'annonce ")
     }
 
    const Update_annonce=(ev)=>{ 
-       v.preventDefault()
-       axios.post('http://localhost:3001/authentification',{
-        id_annonce:Annonce.id,
-        titre_annonce:Annonce.titre,
-        domaine_annonce:Annonce.domaine,
-        budget_annoce:Annonce.budget,
-        description_annonce:Annonce.description,
+       ev.preventDefault()
+      
+       axios.post('http://localhost:3001/Update_Annonce',{
+        id_annonce:id.value,
+        titre_annonce:titre.value,
+        domaine_annonce:domaine.value,
+        budget_annonce:budget.value,
+        description_annonce:description.value,
        },{withCredentials:true}).then(
         (response=>{
+          console.log(response)
             response_updating.value=response.data.message
+            var x = document.getElementById('Dialog');
+      	    x.close('animalNotChosen');
         }),(err=>{
 
         })
@@ -119,11 +129,13 @@
     Annonces,
     Delete,
     Function,
+    id,
     titre,
     domaine,
     description,
     budget,
-    Update_annonce
+    Update_annonce,
+   
    
   }
 }
@@ -146,9 +158,7 @@
           <div class=" titre suprimer"> suprimer</div>
           <div class=" titre"> propositions</div>
       </div>
-         
-        <div v-for="Annonce in Annonces"   class="boucle " id="ligne">
-                <dialog :id="'Dialog'+Annonce.id" >
+      <dialog :id="'Dialog'" >
 			<div class="form-title">Mofifier l'annonce  
 			
 			</div>
@@ -158,30 +168,30 @@
          
 					<div class="input-container" hidden>
             <label  >ID</label><br>
-					  <input placeholder="title" type="text" v-model="Annonce.id"  required>
+					  <input placeholder="title" type="text"  v-model="id" required>
 					
 					</div>
           <label  >titre de l'annonce</label><br>
 					<div class="input-container">
-					  <input placeholder="title" type="text" v-model="Annonce.titre"   required>
-					
+					  <input placeholder="title" type="text"   v-model="titre"  required>
+					   
 					</div>
 
           <label  >description de l'anoce</label><br>
 					<div class="input-container">
-					<input s="desciption" type="description" v-model="Annonce.description" required id="description">
+					<input s="desciption" type="description"  v-model="description"  required id="description">
 
          
 					</div>
 					<div class="input-container">
             <label  >budget de l'annonce</label><br>
-					<input placeholder="entrer le budget" type="number" v-model="Annonce.budget" required>
+					<input placeholder="entrer le budget" type="number"  v-model="budget"  required>
 
          
 					</div>
           <label for="ID" >domaine de l'annonce</label><br>
 					<div class="input-container">
-					<input placeholder="domaine " type="text" v-model="Annonce.domaine" required>
+					<input placeholder="domaine " type="text" v-model="domaine" required>
 
 					
 					</div>
@@ -189,7 +199,7 @@
 						<button class="submit" type="submit" >
 						post
 						</button>
-						<button class="reset" type="reset" @click="fonction(Annonce.id)">
+						<button class="reset" type="reset" @click="fonction()">
 						annuler
 						</button>
 				</div>	
@@ -199,6 +209,8 @@
 			
 
   		          </dialog>
+        <div v-for="Annonce in Annonces"   class="boucle " id="ligne">
+               
           <div class="ele">{{Annonce.id}}  </div>
           <div class="ele">{{Annonce.titre}}  </div>
           <div class="ele"> {{Annonce.domaine}}</div>
@@ -211,7 +223,7 @@
             </RouterLink>
           </div>
           <div class="ele">
-                <svg xmlns="http://www.w3.org/2000/svg"  @click="()=>Function(Annonce.id)" height="24" viewBox="0 -960 960 960" width="48"><path d="M180-180h44l443-443-44-44-443 443v44Zm614-486L666-794l42-42q17-17 42-17t42 17l44 44q17 17 17 42t-17 42l-42 42Zm-42 42L248-120H120v-128l504-504 128 128Zm-107-21-22-22 44 44-22-22Z"/></svg>          </div>
+                <svg xmlns="http://www.w3.org/2000/svg"  @click="()=>Function(Annonce.id,Annonce.titre,Annonce.budget,Annonce.description,Annonce.domaine)" height="24" viewBox="0 -960 960 960" width="48"><path d="M180-180h44l443-443-44-44-443 443v44Zm614-486L666-794l42-42q17-17 42-17t42 17l44 44q17 17 17 42t-17 42l-42 42Zm-42 42L248-120H120v-128l504-504 128 128Zm-107-21-22-22 44 44-22-22Z"/></svg>          </div>
                
           <div class="ele">
                   

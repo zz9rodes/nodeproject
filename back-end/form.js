@@ -919,28 +919,34 @@ app.post('/Update_Annonce',(req,res)=>{
 		if(erro){
 			console.log("erreur d'envoi de requette"+erro.message)
 			res.send({message:"desole un probleme est survenu en haut",statut:false})
+			return 
 		}
 		else{
 			
 			try{
 			
-				if(req.cookies && req.cookies.email){
-				conn.query (`update  annonces set titre='${titre}',desription='${description}',domaine='${domaine}',budget=${budget} where id=${id} ")`,(err,resulta)=>{
-					if(err){
-						res.send({message:"impossibles de modifier cette annonce pour le momment"})
-					}
-					else{
-						console.log("l'ajout a bien ete effectuer !:) ")
-						res.send({message:"votre annonce a bien ete modifier ",statut:true}) 
-					
-					}
+				
+					conn.query (`update  annonces set titre='${titre}',desription='${description}',domaine='${domaine}',budget='${budget}' where id=${id}`,(err,resulta)=>{
+						if(err){
+							console.log("erreur "+err)
+							res.send({message:"impossibles de modifier cette annonce pour le momment"})
+
+							return
+						}
+						else{
+							console.log("l'ajout a bien ete effectuer !:) ")
+							res.send({message:"votre annonce a bien ete modifier ",statut:true}) 
+
+							return
+						
+						}
 				});
-				console.log("l'ajout a bien ete effectuer !:) ")
-				res.send({message:"votre annonce a bien ete modifier ",statut:true}) 
-			}
+				
+				
 				}catch(erro){
 				console.log(erro);
 				res.send({message:"desole un probleme est survenu  en bas ",statut:false})
+				return
 			}
 		  	
 		}

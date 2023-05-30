@@ -90,7 +90,7 @@ import { useRouter, useRoute } from 'vue-router'
 <template>
     <div>
     <form class="form"  v-if="look" @submit="Se_Connecter"> 
-      <h3> params :{{ id }}</h3>
+     
       <div class="eror">{{ message }}</div>  
        <p class="form-title">Login</p>
         <div class="input-container">

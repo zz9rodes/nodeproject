@@ -23,7 +23,7 @@ export default{
         const route = useRoute()
         // console.log(route.query.id)
         var Id=route.query.id;
-        var email_auteur=route.query.email;
+        var email_auteur=route.query.Kthd_eo;
         let randomNumberlike = Math.floor(Math.random() * 500);
         let randomNumberpostule= Math.floor(Math.random() * 160);
     const copyLink=()=>{

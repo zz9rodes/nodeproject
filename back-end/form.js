@@ -257,7 +257,7 @@ app.post('/postuler',(req,res)=>{
 	var email_auteur=req.body.email_auteur
 	var currentDate=new Date();
 	var date=currentDate.toString();
-	
+	console.log("voici l'email de l'auter"+email_auteur)
 	
 	req.getConnection((erro,conn)=>{
 		if(erro){
@@ -282,7 +282,7 @@ app.post('/postuler',(req,res)=>{
 	
 							try{
 								if(req.cookies && req.cookies.email&&req.cookies.pseudo){
-								conn.query (`insert into postuler(id_Annonce,email_personne,pseudo_personne,dates) values("${id_annonce}", "${req.cookies.email}", "${req.cookies.pseudo}","${date}")`);
+								conn.query (`insert into postuler(id_Annonce,email_personne,pseudo_personne,dates,email_auteur) values("${id_annonce}", "${req.cookies.email}", "${req.cookies.pseudo}","${date}","${email_auteur}")`);
 								console.log("l'ajout a bien ete effectuer !:) ")
 								res.send({message:`votre demande a bien ete envoyer `,statut:true}) 
 							}
@@ -408,30 +408,31 @@ app.get('/list_Query',auth,(req,res)=>{
 						res.status(422).send({message:"erreur de connexion",status:false})
 				}
 				else{
-					if(resultat.length>0){
-					let tableau=new Array();
-						let demande;
-							for(var i=0;i<resultat.length;i++){
-							
-								demande={		
-								id:resultat[i].id,				
-								titre:resultat[i].Titre,
-								budget:resultat[i].Budget,
-								description:resultat[i].Desription,
-								date:(resultat[i].dates).substring(0,25),
-								email:resultat[i].email_Personne,
-								nom:resultat[i].pseudo_personne,
-								domaine:resultat[i].domaine,
+						if(resultat.length>0){
+							let tableau=new Array();
+							let demande;
+								for(var i=0;i<resultat.length;i++){
 								
-								}
-							tableau.push(demande);
+									demande={		
+									id:resultat[i].id,				
+									titre:resultat[i].Titre,
+									budget:resultat[i].Budget,
+									description:resultat[i].Desription,
+									date:(resultat[i].dates).substring(0,25),
+									email:resultat[i].email_Personne,
+									nom:resultat[i].pseudo_personne,
+									domaine:resultat[i].domaine,
+									email_auteur:resultat[i].email_auteur
+									
+									}
+								tableau.push(demande);
+									}
+								
+								res.status(200).send({message:tableau,diver:"tout vos demandes ici ",status:true})
+							} else {
+								res.send({diver:"vous n'avez postuler pour aucune annonces",status:false})
+							}
 						}
-							
-							res.status(200).send({message:tableau,diver:"tout vos demandes ici ",status:true})
-						} else {
-							res.status(422).send({diver:"vous n'avez postuler pour aucune annonces",status:false})
-						}
-					}
 				});
 			}catch(erro){
 		}

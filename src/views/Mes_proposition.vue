@@ -31,7 +31,7 @@
           }
           else{
             message.value=response.data.diver
-            statut.value=response.data.status
+            statut.value=true
           }
             
           },
@@ -53,7 +53,7 @@
 
     const sendEmail =(ev)=>{
                 ev.preventDefault()
-                axios.post('http://localhost:3001/update',
+                axios.post('http:// 192.168.2.5:3001/update',
           {
             email:email.value,
           }, {withCredentials:true}
@@ -74,7 +74,7 @@
         }
 	
         const authentification = ()=> {
-        axios.get('http://localhost:3001/authentification',{withCredentials:true})
+        axios.get('http:// 192.168.2.5:3001/authentification',{withCredentials:true})
             .then(response=>{
             console.log(response)
           messages.value=response.data.message
@@ -113,19 +113,20 @@
 </script>
 
 <template>
-     <div class="container">  
-      
-    <ul>  
-          <h3 v-if="statut" class="error">{{ message }}  vous n'avez pas encore de demandes pour cette annonce
-            <br><br>
-            <span style="color:black">titre de l'annonce :</span> {{ titre }}
-              <!-- <p style="text-align: center; ">vos demandes d'emplois pour l'annonce "{{ titre }}" </p> -->
+      <div v-if="statut">
+     
+          <h3 class="error">
+            {{ message }}  
           </h3>
-        <div v-else style="display: flex; flex-direction: column;">
+      </div>
+      <div class="container" v-else>  
+      
+       <ul>  
+          
+        <div  style="display: flex; flex-direction: column;">
           <h3 class="erro"> 
             <br><br>
             <span style="color:black ; float: left; ">Titre de l'annonce :</span> {{ titre }}
-              <!-- <p style="text-align: center; ">vos demandes d'emplois pour l'annonce "{{ titre }}" </p> -->
           </h3>
           <div  id="ligne" >
        
@@ -137,7 +138,7 @@
           <div class=" titre">depuis le </div>
           <div class=" titre">Profil</div>
           <div class=" titre">Gmail</div>
-      </div>
+       </div>
         </div>
       
          
@@ -157,7 +158,7 @@
                   <svg xmlns="http://www.w3.org/2000/svg" @click="sendEmail" style="cursor:pointer"  height="38" viewBox="0 -960 960 960" width="48"><path d="M295.615-160q-22.442 0-38.913-16.471-16.471-16.471-16.471-38.913v-518.462H200v-30.77h154.154v-26.154h251.692v26.154H760v30.77h-40.231v518.462q0 23.057-16.163 39.221Q687.443-160 664.385-160h-368.77ZM689-733.846H271v518.462q0 10.769 7.308 17.692 7.307 6.923 17.307 6.923h368.77q9.231 0 16.923-7.692Q689-206.154 689-215.384v-518.462ZM395.461-273.692h30.77v-378.231h-30.77v378.231Zm138.308 0h30.77v-378.231h-30.77v378.231ZM271-733.846v543.077-543.077Z"/></svg>
           </div>
         </div>
-    </ul>
+       </ul>
     </div>
 </template>
 
@@ -180,7 +181,8 @@
 .error{
   text-align: center;
   font-size: 30px;
-  color: red;
+  color: rgb(0, 0, 0);
+  margin-top: 150px;
 }
 .erro{
   float: left;

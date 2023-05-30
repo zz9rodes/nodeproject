@@ -54,12 +54,12 @@ import { ref } from 'vue'
       
        <div class="input-container">
         your new password
-          <input placeholder="Enter password" type="password" v-model="password" required>
+          <input placeholder="Enter password" type="password" v-model="password"  minlength="9" required>
         </div>
       
         <div class="input-container">
             confirm the password
-          <input placeholder="confirm password" type="password" v-model="confirm_password" required> 
+          <input placeholder="confirm password" type="password" v-model="confirm_password"  minlength="9" required> 
         </div>
         
          <button class="submit" type="submit" @click="ResetPasswork">

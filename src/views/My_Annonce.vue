@@ -148,15 +148,15 @@
         <h1 style="text-align: center;">your   posts </h1>
     <ul>  
       <div  id="ligne">
-        <div class=" titre">N-0</div>
-          <div class=" titre">titre</div>
-          <div class=" titre"> domaine</div>
+      
+          <div class=" titre">title</div>
+          <div class=" titre"> domain</div>
           <div class=" titre"> budget (fcfa)</div>
           <div class=" titre"> date</div>
-          <div class=" titre"> voire</div>
-          <div class=" titre"> modifier</div>
-          <div class=" titre suprimer"> suprimer</div>
-          <div class=" titre"> propositions</div>
+          <div class=" titre"> to wact</div>
+          <div class=" titre"> edit post</div>
+          <div class=" titre suprimer"> delete</div>
+          <div class=" titre"> request</div>
       </div>
       <dialog :id="'Dialog'" >
 			<div class="form-title">Mofifier l'annonce  
@@ -211,7 +211,7 @@
   		          </dialog>
         <div v-for="Annonce in Annonces"   class="boucle " id="ligne">
                
-          <div class="ele">{{Annonce.id}}  </div>
+         
           <div class="ele">{{Annonce.titre}}  </div>
           <div class="ele"> {{Annonce.domaine}}</div>
           <div class="ele"> {{Annonce.budget}} Fcfa</div>

@@ -6,10 +6,13 @@
 	setup(){
 	
     var Querys=ref([]);
+    var message=ref('')
 	const  list_Query=()=>{
                 axios.get('http://localhost:3001/list_Query', {withCredentials:true})
         .then(response=>{console.log(response) 
-            Querys.value=response.data.message},
+            Querys.value=response.data.message
+           
+          },
         (err)=>
         {
             if (err.response && err.response.data) 

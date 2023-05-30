@@ -11,11 +11,17 @@
 		  var budget=ref('');
 		  var domaine=ref('');
 		  var status=ref(false)
+		  var statut=ref(false)
+		  var help=ref(true)
 		  const looK=()=>{
-				status=true;
+				status.value=true;
+				statut.value=true;
+				help.value=false
 		  }
-		  const	nolook=()=>{
-				status=false;
+		  const	nolooK=()=>{
+				status.value=false;
+				statut.value=true;
+				help.value=true
 		  }
 			
     const myFunction=()=> {
@@ -77,6 +83,11 @@
 		budget,
 		domaine,
         valid,
+		looK,
+		nolooK,
+		status,
+		statut,
+		help
 
 	}
 	
@@ -91,13 +102,11 @@
             
 			
 			<span>
-				<li><router-link to="/list_annonce" class="link" style="color: blueviolet;" >actualites</router-link></li>
+				<li><router-link to="/list_annonce" class="link" style="color: blueviolet;" >News Feed</router-link></li>
 				<li><router-link to="/list_my_annonce" class="link"> my Publications</router-link></li>
                 <li><router-link to="/list_query" class="link">my Postulations</router-link></li>
-				<!-- <li><router-link to="/list_annonce" class="link">my Propositions</router-link></li> -->
-				<!-- <li><router-link to="/list_annonce" class="link">my stats</router-link></li> -->
 				
-				<li class="annonce" @click="myFunction">post</li>
+				<li class="annonce" @click="myFunction">Create post</li>
 				<li class="deconect" @click="deconnet"><span id="add">logout</span></li>
 			</span>	
 				
@@ -141,20 +150,37 @@
 						annuler
 						</button>
 				</div>	
-				<div class="help">
-				<p>besoin Aide</p>	 
-					<svg xmlns="http://www.w3.org/2000/svg" @click="looK" style="font-size: 26px;" height="48" viewBox="0 -960 960 960" width="48"><path d="M480-345 240-585l43-43 197 198 197-197 43 43-240 239Z"/></svg>
-					<div id="explain">
-						<h3 style=" font-size: 17px;">Remplir les information <br>
-							Titre	:ici il s'agit du titre donner a votre annonce <br>
-							Domaine :ici il du domaine professionnnel conserner par votre annonce de votre annonce <br> 
-							Budget: ici il s'agit des du budget prevut pour votre annonce , eventuellement negociables 
+				<div class="help" >
+					<p style="margin-left: 100px;"> needs help ?
 
-							<pre> remonter   					<svg xmlns="http://www.w3.org/2000/svg" @click="looK" style="font-size: 26px;" height="48" viewBox="0 -960 960 960" width="48"><path d="M480-345 240-585l43-43 197 198 197-197 43 43-240 239Z"/></svg>
-</pre>
-						</h3>
+					</p>	 
+					<svg xmlns="http://www.w3.org/2000/svg" style="cursor: pointer;" v-if="help" @click="looK" height="28" viewBox="0 -960 960 960" width="48"><path d="M480-345 240-585l43-43 197 198 197-197 43 43-240 239Z"/></svg>
 
-					</div>
+						<div id="explain" v-if="status" style="font-family: 'Arial, sans-serif;">
+							<h3 style="font-size:15px; font-family:"><br>
+								Remplir les information 
+								<br>
+								<br>
+								<br>
+								title	:ici il s'agit du titre donner a votre annonce 
+								<br>
+								<br>
+								Description  : describe you post , telk what do you want to resolve
+								<br>
+								<br>
+								<br>
+								<br> 
+								Budget  : what is your planned budget for , it is possibly modifiable 
+								<br>
+								<br> 
+								Domain  :what is the professional field so this announcement speaks
+								<br>
+								<br> 
+								<svg xmlns="http://www.w3.org/2000/svg" style="cursor: pointer;"  v-if="statut" @click="nolooK" height="28" viewBox="0 -960 960 960" width="48"><path d="m283-345-43-43 240-240 240 239-43 43-197-197-197 198Z"/></svg>
+									remonter
+							</h3>
+
+						</div>
 				</div>
         		
 			</form>
@@ -166,6 +192,7 @@
 </template>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Dosis&family=Quicksand:wght@300&display=swap');
          * {
 				margin: 0;
 				padding: 0;
@@ -173,12 +200,23 @@
 				box-sizing: border-box;  
 				font-family: 'Quicksand', sans-serif;
 			} 
+			/* .link:focus-visible{
+				background-color: #0db33f;
+				color: #e24a1c;
+			} */
+			#explain{
+				/* font-family: 'Dosis', sans-serif; */
+				/* font-family: 'Quicksand', sans-serif; */
+				font-size: 18px;
+				font-weight: 50px;
+			}
 			header{
     			
     			background-color: #F7F9F9 ;
     			width: 90%;
 				margin-left: 100px;
 				border-radius: 8px;
+				height: auto;
 			}
 			
 			header li{
@@ -209,24 +247,25 @@
 				background-color:#6b11e0 ;
 				color: #ddd7d7;
 				border-radius: 4px;
-				width: 100px;
+				width: auto;
 				padding: 5px;
 				font-size: 20px;
 				height: 40px;
 				cursor: pointer;
-				margin-left: 200px;
+				margin-left: 100px;
 			}
 			.deconect{
 				padding: 5px;
-				background-color:#6b11e0 ;
-				color: #ddd7d7;
+				background-color:#000000 ;
+				color: #ffffff;
 				width: auto;
 				height: 40px;
 				font-size: 20px;
 				border-radius: 4px;
-				cursor: pointer;
-				margin-left: 100px;
+				cursor: pointer;			
+				float: right;
 				margin-top: -3s0px;
+				margin-right: 50px;
 			}
 			.deconect:active,.annonce:active{
 				background-color: #f0eef3;

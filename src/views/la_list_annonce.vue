@@ -11,7 +11,7 @@ export default{
      var message=ref()
      var status=ref()
       const Se_Connecter = ()=> {
-        axios.get('http://localhost:3001/List_annonce',{withCredentials:true})
+        axios.get('http://192.168.2.5:3001/List_annonce',{withCredentials:true})
             .then(response=>{
             console.log(response)
           annonces.value=response.data.message
@@ -28,7 +28,7 @@ export default{
         console.log(annonces.value);
   }
   const authentification = ()=> {
-        axios.get('http://localhost:3001/authentification',{withCredentials:true})
+        axios.get('http://192.168.2.5:3001/authentification',{withCredentials:true})
             .then(response=>{
             console.log(response)
           message.value=response.data.message

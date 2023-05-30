@@ -28,7 +28,7 @@ export default{
         console.log(annonces.value);
   }
   const authentification = ()=> {
-        axios.get('http:// 192.168.2.5:3001/authentification',{withCredentials:true})
+        axios.get('http://localhost:3001/authentification',{withCredentials:true})
             .then(response=>{
             console.log(response)
           message.value=response.data.message

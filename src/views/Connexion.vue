@@ -16,6 +16,7 @@ import { useRouter, useRoute } from 'vue-router'
         var look=ref(true)
         var etat = ref("");
         var message=ref('')
+        var message_conn=ref('')
         var message_verif=ref('')
         var params=ref(route.params.userId )
         var exe="auteur"
@@ -34,7 +35,7 @@ import { useRouter, useRoute } from 'vue-router'
                     router.push({ name: "list_annonce" });
                 }
                 else{
-                  message.value=response.data.message;
+                  message_conn.value=response.data.message;
                 }
             },
             (err) => console.log(err.response.data)
@@ -76,6 +77,7 @@ import { useRouter, useRoute } from 'vue-router'
             password,
             message,
             message_verif,
+            message_conn,
             Se_Connecter,
             updatePasswork,
             params,
@@ -91,14 +93,14 @@ import { useRouter, useRoute } from 'vue-router'
     <div>
     <form class="form"  v-if="look" @submit="Se_Connecter"> 
      
-      <div class="eror">{{ message }}</div>  
+      <div class="eror">{{ message_conn }}</div>  
        <p class="form-title">Login</p>
         <div class="input-container">
-          <input placeholder="Enter email" type="email" v-model="email">
+          <input placeholder="Enter email" type="email" v-model="email" required>
         </div>
       
         <div class="input-container">
-          <input placeholder="Enter password" type="password" v-model="password">
+          <input placeholder="Enter password" type="password" v-model="password" required>
 
           
         </div>

@@ -261,32 +261,43 @@ app.post('/postuler',(req,res)=>{
 	
 	req.getConnection((erro,conn)=>{
 		if(erro){
+			console.log("1")
 			console.log("erreur d'envoi de requette"+erro.message)
 			res.send({message:"desole un probleme est survenu en haut",statut:false})
 		}
 		else{
+			console.log("2")
 			if(email_auteur==req.cookies.email){
+				console.log("3")
 				res.send({message:"impossible pour vous de postuler pur cette annonce"})
 			}
 			else{
+				console.log("4")
 				conn.query(`select * from postuler where id_annonce=${id_annonce} and email_personne='${req.cookies.email}'`,(erreur,resultat)=>{
 					if(erreur){
+						console.log("5")
 						console.log(erreur)
 					}else{
+						console.log("6")
 						if(resultat.length>0){
+							console.log("7")
 							res.send({message:"il est possible que vous avez deja postuler pour cette annonce  ",statut:false})
 						}
 						else{
+							console.log("8")
 							var email=req.cookies.pseudo;
 							// console.log(req.cookies.pseudo);
 	
 							try{
+								console.log("9")
 								if(req.cookies && req.cookies.email&&req.cookies.pseudo){
+									console.log("10")
 								conn.query (`insert into postuler(id_Annonce,email_personne,pseudo_personne,dates,email_auteur) values("${id_annonce}", "${req.cookies.email}", "${req.cookies.pseudo}","${date}","${email_auteur}")`);
 								console.log("l'ajout a bien ete effectuer !:) ")
 								res.send({message:`votre demande a bien ete envoyer `,statut:true}) 
 							}
-								}catch(erro){			
+								}catch(erro){	
+									console.log("11")		
 								res.send({message:"desole un probleme est survenu  veillez recommencer plutard ",statut:false})
 							}
 						}
@@ -301,6 +312,7 @@ app.post('/postuler',(req,res)=>{
 		  	
 		}
 	})
+	console.log("1")
 	
 })
 

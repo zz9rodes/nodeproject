@@ -174,7 +174,7 @@
 				font-family: 'Quicksand', sans-serif;
 			} 
 			header{
-    			/* text-align:  center; */
+    			
     			background-color: #F7F9F9 ;
     			width: 90%;
 				margin-left: 100px;
@@ -356,28 +356,15 @@ dialog{
 }
 .ferme{
 	margin-left: 80%;
-	/* background-color: #e24a1c; */
-	/* height: 50px;
-	height: 50px; */
 	cursor: pointer;
 }
 .ferme svg{
 	background-color: #e24a1c; 
 	fill:#ddd7d7
 }
-@keyframes blink {
-  0% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
+
 
 .ferme svg {
-  animation: blink 3s linear infinite;
+  border-radius: 10px;
 }
 </style>

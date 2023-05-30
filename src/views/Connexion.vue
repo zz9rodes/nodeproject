@@ -9,12 +9,16 @@ import { useRouter, useRoute } from 'vue-router'
     export default{
     setup() {
         const router = useRouter();
+        const route = useRoute();
+        const id = route.params.userId;
         var email = ref("");
         var password = ref("");
         var look=ref(true)
         var etat = ref("");
         var message=ref('')
         var message_verif=ref('')
+        var params=ref(route.params.userId )
+        var exe="auteur"
          /**fonction pour envoyer la connexion */
         const Se_Connecter = (ev) => {
             ev.preventDefault();
@@ -74,6 +78,8 @@ import { useRouter, useRoute } from 'vue-router'
             message_verif,
             Se_Connecter,
             updatePasswork,
+            params,
+            id
         };
     },
     
@@ -84,6 +90,7 @@ import { useRouter, useRoute } from 'vue-router'
 <template>
     <div>
     <form class="form"  v-if="look" @submit="Se_Connecter"> 
+      <h3> params :{{ id }}</h3>
       <div class="eror">{{ message }}</div>  
        <p class="form-title">Login</p>
         <div class="input-container">

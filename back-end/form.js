@@ -206,13 +206,13 @@ app.get('/List_Annonce',auth,(req,res)=>{
 
 	req.getConnection((erro,conn)=>{
 		if(erro){
-			console.log("erreur d'envoi de requette")
+		  
 		}
 		else{
 			try{
 					conn.query(`select * from annonces order by id desc`,(erreur,resultat)=>{
 						if(erreur){
-							console.log('erreur de connexion');
+							
 							res.status(422).send({message:"erreur de connexion",status:false})
 						}
 						else{
@@ -245,7 +245,6 @@ app.get('/List_Annonce',auth,(req,res)=>{
 						}
 					});
 				}catch(erro){
-				console.log(erro);
 			}
 		}
 	})
@@ -313,16 +312,14 @@ app.post('/commentaire',(req,res)=>{
 	var date=currentDate.toString();
 	req.getConnection((erro,conn)=>{
 		if(erro){
-			console.log("erreur d'envoi de requette"+erro.message)
 			res.send({message:"desole un probleme est survenu en haut",statut:false})
 		}
 		else{
 			conn.query(`select * from commentaire where id_annonce=${id_annonce} and email_personne='${req.cookies.email}'`,(erreur,resultat)=>{
 				if(erreur){
-					console.log(erreur)
+
 				}else{
 					if(resultat.length>0){
-						console.log("deja enregistrer")
 						res.send({message:"desoler vous n'avez droit qu'a un quel commentaire  ",statut:false})
 					}
 					else{
@@ -335,14 +332,12 @@ app.post('/commentaire',(req,res)=>{
 										}
 										else{
 
-											console.log("l'ajout a bien ete effectuer !:) ")
-											res.send({message:`votre commentaire a bien ete envoyer !`,statut:true}) 
+										res.send({message:`votre commentaire a bien ete envoyer !`,statut:true}) 
 										}
 								});
 								
 							}
 							}catch(erro){	
-										console.log(erro.message)		
 										res.send({message:"desole un probleme est survenu  veillez recommencer plutard ",statut:false})
 						}
 								
@@ -363,13 +358,11 @@ app.post('/List_commentaire',(req,res)=>{
 	var id_Annonce=req.body.id_annonce;
 	req.getConnection((erro,conn)=>{
 		if(erro){
-			console.log("erreur d'envoi de requette")
 		}
 		else{
 			try{
 					conn.query(`select * from commentaires where id_annonce="${id_Annonce}" `,(erreur,resultat)=>{
 						if(erreur){
-							console.log('erreur de connexion');
 							res.status(422).send({message:"erreur de connexion",status:false})
 						}
 						else{
@@ -386,20 +379,16 @@ app.post('/List_commentaire',(req,res)=>{
 									}
 									tableau.push(commentaire);
 								}
-								console.log('les commentaires')
-								console.log(tableau)
-							
+						
 								res.status(200).send({message:tableau,diver:"tout les commentaire ici",status:true})
 								
 								
 						} else {
 								res.status(422).send({diver:"aucun commentaire soyez le premier a commenterr",status:false})
-								console.log(id_Annonce);
 							}
 						}
 					});
 				}catch(erro){
-				console.log(erro);
 			}
 		}
 	})
@@ -411,20 +400,17 @@ app.get('/list_Query',auth,(req,res)=>{
 	
 	req.getConnection((erro,conn)=>{
 		if(erro){
-			console.log("erreur d'envoi de requette")
 		}
 		else{
 			try{
 				conn.query(`SELECT * FROM annonces INNER JOIN postuler ON annonces.id=postuler.id_Annonce and postuler.email_Personne="${req.cookies.email}"`,(erreur,resultat)=>{
 				if(erreur){
-						console.log('erreur de connexion');
 						res.status(422).send({message:"erreur de connexion",status:false})
 				}
 				else{
 					if(resultat.length>0){
 					let tableau=new Array();
 						let demande;
-						console.log("les resulta ici"+resultat)
 							for(var i=0;i<resultat.length;i++){
 							
 								demande={		
@@ -440,8 +426,7 @@ app.get('/list_Query',auth,(req,res)=>{
 								}
 							tableau.push(demande);
 						}
-							// console.log('les demandess et le bug')
-							// console.log(tableau)
+							
 							res.status(200).send({message:tableau,diver:"tout vos demandes ici ",status:true})
 						} else {
 							res.status(422).send({diver:"vous n'avez postuler pour aucune annonces",status:false})
@@ -449,7 +434,6 @@ app.get('/list_Query',auth,(req,res)=>{
 					}
 				});
 			}catch(erro){
-			console.log(erro);
 		}
 	}
 })
@@ -466,8 +450,6 @@ app.get('/list_My_annoce',auth,(req,res)=>{
 			try{
 				conn.query(`SELECT * FROM annonces  where annonces.email_Personne="${req.cookies.email}"`,(erreur,resultat)=>{
 				if(erreur){
-						console.log(erro.message)
-						console.log('erreur de connexion');
 						res.status(422).send({message:"erreur de connexion",status:false})
 				}
 				else{
@@ -488,8 +470,7 @@ app.get('/list_My_annoce',auth,(req,res)=>{
 								}
 							tableau.push(demande);
 						}
-							// console.log('les demandes')
-							// console.log(tableau)
+							
 							res.status(200).send({message:tableau,diver:"tout vos demandes ici ",status:true})
 						} else {
 							res.status(422).send({diver:"vous n'avez postuler pour aucune annonces",status:false})
@@ -497,7 +478,6 @@ app.get('/list_My_annoce',auth,(req,res)=>{
 					}
 				});
 			}catch(erro){
-			console.log(erro);
 		}
 	}
 })
@@ -509,13 +489,11 @@ app.post ('/list_proposition',auth,(req,res)=>{
 	var id_Annonce=req.body.id;
 	req.getConnection((erro,conn)=>{
 		if(erro){
-			console.log("erreur d'envoi de requette")
 		}
 		else{
 			try{
 				conn.query(`SELECT * FROM personne INNER JOIN postuler ON personne.email=postuler.email_Personne and postuler.id_Annonce="${id_Annonce}"`,(erreur,resultat)=>{
 				if(erreur){
-						console.log('erreur de connexion');
 						res.status(422).send({message:"erreur de connexion",status:false})
 				}
 				else{
@@ -531,8 +509,6 @@ app.post ('/list_proposition',auth,(req,res)=>{
 								}
 							tableau.push(proposition);
 						}
-							console.log('les demandes')
-							console.log(tableau)
 							res.status(200).send({message:tableau,diver:"toutes les demande d'emplois ici",status:true})
 						} else {
 							res.send({diver:"vous n'avez pas encore de demande pour cette annonce",status:false})
@@ -706,17 +682,14 @@ app.post('/delete_annonce',(req,res)=>{
 	if(id!='' ||id!=undefined){
 		req.getConnection((erro,conn)=>{
 			if(erro){
-				console.log(erro)
 				res.send({message:'ereur de connexion',statut:false})
 			}
 			else{
 				conn.query(`delete  from annonces  where annonces.id = ${id}`,(eror,resultat)=>{
 					if(eror){
-						console.log(eror)
 						res.send({message:"impossible de suprimer cet 'Annonce"})
 					}
 					else{
-							console.log(resultat+"elements ont ete supprimer ")
 							res.send({message:"sppression effectuer avec succes"})
 					}
 					  
@@ -731,21 +704,17 @@ app.post('/delete_annonce',(req,res)=>{
 
 app.post('/delete_query',(req,res)=>{
 	var id=req.body.id_annonce
-	console.log('voici lemail'+req.cookies.email)
 	if(id!='' && id!=undefined && req.cookies){
 		req.getConnection((erro,conn)=>{
 			if(erro){
-				console.log(erro)
 				res.send({message:'ereur de connexion',statut:false})
 			}
 			else{
 				conn.query(`delete  from postuler  where postuler.id_Annonce = ${id} and postuler.email_Personne='${req.cookies.email}'`,(eror,resultat)=>{
 					if(eror){
-						console.log(eror)
 						res.send({message:"impossible de suprimer cet 'Annonce"})
 					}
 					else{
-							console.log(resultat+"elements ont ete supprimer ")
 							res.send({message:"sppression effectuer avec succes"})
 					}
 					  
@@ -768,11 +737,9 @@ app.post('/est_liker',(req,res)=>{
 					}
 					else{
 						if(result.length>0){
-							console.log("true")
 							res.send({etat:true})
 						}
 						else{
-							console.log("false")
 							res.send({etat:false})
 						}
 					}
@@ -783,24 +750,20 @@ app.post('/est_liker',(req,res)=>{
 
 app.post('/liker',(req,res)=>{
 	var id_annonce=req.body.id_annonce;
-	console.log(id_annonce,req.cookies.email)
 
 	if(id_annonce!="" && req.cookies.email){
 		req.getConnection((err,conn)=>{
 
 			if(err){
-				console.log('impossible probleme de reseau')
 				res.send({message:'erreur de connexion',statut:false})
 			}
 			else{
 				
 					conn.query(`insert into likes (id_annonce,email_personne) values(${id_annonce},'${req.cookies.email}') `,(erreur,resulta)=>{
 						if(erreur){
-							console.log('impossible' +erreur)
 							res.send({message:'impossible',statut:false})
 						}
 						else{
-							console.log('vous avez liker cette annonce')
 							res.send({message:'vous avez liker cette annonce',statut:true})
 						}
 					})
@@ -840,21 +803,21 @@ app.post('/Delete_like',(req,res)=>{
 
 app.post('/get_User_profil',(req,res)=>{
 	var email=req.body.email;
-	console.log("l'email ici 1"+email)
-
+	
+console.log("voici l'email "+email)
 	req.getConnection((erro,conn)=>{
 			if(erro){
-				console.log("l'email ici 2 "+email)
+				
 				res.send({message:"erreur de connexion" ,statut:false})
 			}
 			else{
-				console.log("l'email ici  3"+email)
+				
 				conn.query(`select * from personne where email='${email}'`,(err,result)=>{
 					if(err){
 						res.send({message:'erreur',statut:false})
 					}
 					else{
-						console.log("l'email ici  4"+email)
+						
 						if(result.length>0){
 							let infos
 								infos={
@@ -863,7 +826,6 @@ app.post('/get_User_profil',(req,res)=>{
 									competence:result[0].competence,
 								}
 													
-								console.log("les infos ici   "+infos.email)
 								res.send({message:infos,statut:true})
 							
 						}
@@ -953,6 +915,43 @@ app.post('/Update_Annonce',(req,res)=>{
 	})
 	
 })
+
+app.post('/get_info_annonce',(req,res)=>{
+	var id=req.body.id_Annonce;
+	
+
+	req.getConnection((erro,conn)=>{
+			if(erro){
+			
+				res.send({message:"erreur de connexion" ,statut:false})
+			}
+			else{
+			
+				conn.query(`select *  from annonces where id='${id}'`,(err,result)=>{
+					if(err){
+						res.send({message:'erreur',statut:false})
+					}
+					else{
+						
+						if(result.length>0){
+							let infos
+							infos={
+								email_Personne:result[0].email_Personne,
+								budget:result[0].Budget,
+								date:(result[0].date).substring(0,25),
+								titre:result[0].Titre,
+								domaine:result[0].domaine,
+								description:result[0].Desription
+							}
+							res.send({message:infos,statut:true})
+							
+						}
+					}
+				})
+			}
+	})
+})
+
 
 app.listen(3001);
 console.log('le serveur tourne sur le port 3001 ')

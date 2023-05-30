@@ -18,9 +18,10 @@ export default{
        var commentaires=ref([]);
        var etat=ref(false)
        var infos=ref([])
+       var infos_annonce=ref({})
        var nombres_annonce=ref()
         const route = useRoute()
-        console.log(route.query.id)
+        // console.log(route.query.id)
         var Id=route.query.id;
         var email_auteur=route.query.email;
         let randomNumberlike = Math.floor(Math.random() * 500);
@@ -66,7 +67,7 @@ export default{
           id_annonce:Id,
         },{withCredentials:true})
             .then(response=>{
-            console.log(response)
+            // console.log(response)
           commentaires.value=response.data.message
          
         } , 
@@ -80,7 +81,7 @@ export default{
             
             }
         }) 
-        console.log(commentaires.value);
+        // console.log(commentaires.value);
         
 
     }
@@ -100,17 +101,18 @@ export default{
           id_annonce:Id,
         },{withCredentials:true})
             .then(response=>{
-            console.log(response) 
+           
             etat.value=response.data.etat;  
-            console.log(response) 
+            console.log("voici l'etat de est_liker :"+etat.value)
             if(etat.value){
               var like=document.getElementById('like')
-              like.style.backgroundColor="pink"
+              like.style.backgroundColor="#F00E48 "
+              like.style.fill="white"
               return etat;
             }  
             else{
               var like=document.getElementById('like')
-             
+              like.style.fill="black"
               like.style.backgroundColor ="transparent"
               return etat;
             }
@@ -129,16 +131,19 @@ export default{
 
     const liker= async ()=>{
       var result= await est_liker()
-      console.log("voici le resultat",result.value)
+      
       if(result.value){
         axios.post('http://localhost:3001/Delete_like',{
           id_annonce:Id,       
       },{withCredentials:true}
         ).then(response=>{
+              var like=document.getElementById('like')
+              like.style.fill="black"
+              like.style.backgroundColor ="transparent"
 
         },
         (erro)=>{
-          console.log("erreur , il ne peut pas supprimer")
+          
         })
       }
       else{
@@ -146,19 +151,24 @@ export default{
           id_annonce:Id,       
       },{withCredentials:true}
         ).then(response=>{
-
+              var like=document.getElementById('like')
+              like.style.backgroundColor="#F00E48 "
+              like.style.fill="white"
         },
         (erro)=>{
-          console.log("erreur , il ne peut pas liker")
+         
         })
       }
 
    } 
    const get_User_profil=()=>{
+    console.log(route.query.Kthd_eo) 
     axios.post('http://localhost:3001/get_User_profil',{
-      email:route.query.email
+      email:route.query.Kthd_eo
+     
     },{withCredentials:true}
     ).then(response=>{
+      console.log(response.data)
         infos.value=response.data.message
         console.log("les infos ici "+ infos)
     },(erro)=>{
@@ -167,11 +177,11 @@ export default{
    }
    const get_nbr_Annonce=()=>{
     axios.post('http://localhost:3001/get_nbr_Annonce',{
-      email:route.query.email
+      email:route.query.Kthd_eo
     },{withCredentials:true}
     ).then(response=>{
       nombres_annonce.value=response.data.message
-        console.log("les infos ici "+ nombres_annonce)
+        // console.log("les infos ici "+ nombres_annonce)
     },(erro)=>{
       console.log("une erreur")
     })
@@ -180,7 +190,7 @@ export default{
    const authentification = ()=> {
         axios.get('http://localhost:3001/authentification',{withCredentials:true})
             .then(response=>{
-            console.log(response)
+            // console.log(response)
           // message.value=response.data.message
           status.value=response.data.etat
           if(status.value!=true){
@@ -191,7 +201,7 @@ export default{
         } , 
         (err) => {
             if (err.response && err.response.data) {
-              console.log(err.response.data)
+              // console.log(err.response.data)
             alert("vous devez vous connecter")
             } else {
               console.log(err)
@@ -200,10 +210,25 @@ export default{
     
   }
 
+
+  const get_info_annonce=()=>{
+    axios.post('http://localhost:3001/get_info_annonce',{
+      id_Annonce:Id
+    },{withCredentials:true}
+    ).then(response=>{
+        // console.log(response.data)
+        infos_annonce.value=response.data.message
+        // console.log("les infos  de l'annonce ici  "+ infos_annonce.email)
+    },(erro)=>{
+      console.log("une erreur")
+    })
+   }
+
    get_User_profil()
     est_liker()
     get_nbr_Annonce()
     authentification()
+    get_info_annonce()
 
    
         return{
@@ -222,7 +247,8 @@ export default{
             look,
             liker,
             infos,
-            nombres_annonce          
+            nombres_annonce,
+            infos_annonce    
         }
       
         
@@ -301,27 +327,10 @@ export default{
 
                     <div class="author-name">
                       <div class="author-name-prefix">Author</div>
-                      <a style="margin-left: 50px;">{{ $route.query.email }}</a>
+                      <a style="margin-left: 50px;">{{ infos_annonce.email_Personne}}</a>
                       
-                      <div class="con-like" id="like" @click="liker">
-                          <input title="like" type="checkbox" id="like" class="like">
-                          <div class="checkmark">
-                            <svg viewBox="0 0 24 24" class="outline" xmlns="http://www.w3.org/2000/svg">
-                              <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Zm-3.585,18.4a2.973,2.973,0,0,1-3.83,0C4.947,16.006,2,11.87,2,8.967a4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,11,8.967a1,1,0,0,0,2,0,4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,22,8.967C22,11.87,19.053,16.006,13.915,20.313Z"></path>
-                            </svg>
-                            <svg viewBox="0 0 24 24" class="filled" xmlns="http://www.w3.org/2000/svg">
-                              <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Z"></path>
-                            </svg>
-                            <svg class="celebrate" width="100" height="100" xmlns="http://www.w3.org/2000/svg">
-                              <polygon points="10,10 20,20" class="poly"></polygon>
-                              <polygon points="10,50 20,50" class="poly"></polygon>
-                              <polygon points="20,80 30,70" class="poly"></polygon>
-                              <polygon points="90,10 80,20" class="poly"></polygon>
-                              <polygon points="90,50 80,50" class="poly"></polygon>
-                              <polygon points="80,80 70,70" class="poly"></polygon>
-                            </svg>
-                            
-                          </div>
+                      <div class="con-like"  @click="liker" style="border-radius: 10px;">
+                         <svg xmlns="http://www.w3.org/2000/svg" id="like"  style="border-radius: 10px;" height="48" viewBox="0 -960 960 960" width="48"><path d="m480-121-41-37q-105.768-97.121-174.884-167.561Q195-396 154-451.5T96.5-552Q80-597 80-643q0-90.155 60.5-150.577Q201-854 290-854q57 0 105.5 27t84.5 78q42-54 89-79.5T670-854q89 0 149.5 60.423Q880-733.155 880-643q0 46-16.5 91T806-451.5Q765-396 695.884-325.561 626.768-255.121 521-158l-41 37Zm0-79q101.236-92.995 166.618-159.498Q712-426 750.5-476t54-89.135q15.5-39.136 15.5-77.72Q820-709 778-751.5T670.225-794q-51.524 0-95.375 31.5Q531-731 504-674h-49q-26-56-69.85-88-43.851-32-95.375-32Q224-794 182-751.5t-42 108.816Q140-604 155.5-564.5t54 90Q248-424 314-358t166 158Zm0-297Z"/></svg>
                           <h3>  {{ randomNumberlike }}   </h3>   
                      </div>
                       
@@ -330,17 +339,17 @@ export default{
 
                   <header class="card-header">
                    
-                    <span class="title" style="margin-left: 100px;">{{ $route.query.title }}</span>
+                    <span class="title" style="margin-left: 100px;">{{infos_annonce.titre }}</span>
                   </header>
                   <main class="info">
-                       {{ $route.query.description }}                       
+                       {{ infos_annonce.description }}                       
                   </main>
                   
 
                     <div class="tags">
                     
-                    <a href="#"> Buget : {{ $route.query.budget }} Fcfa</a>
-                    <a href="#" style="float:  right;">{{ $route.query.date }}</a>
+                    <a href="#"> Buget : {{ infos_annonce.budget }} Fcfa</a>
+                    <a href="#" style="float:  right;">{{ infos_annonce.date }}</a>
                     </div>
 
                    

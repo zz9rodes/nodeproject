@@ -80,11 +80,12 @@ export default{
             <div v-for="annonce in annonces" id="annonces">
               
                     <div class="card">
-                      <RouterLink :to="'/postuler?title=' + annonce.titre+'&id='+annonce.id+'&description='+annonce.description+'&budget='+annonce.budget+'&date='+annonce.date+'&domaine='+annonce.domaine+'&email='+annonce.email+'&pseudo='+annonce.pseudo" style="text-decoration: none;">
-                  
+                      <RouterLink :to="'/postuler?id='+annonce.id+'&Kthd_eo='+annonce.email" style="text-decoration: none;">
+                     
                            <div class="header">
                               <p  id="titre" style="">
                                {{ annonce.titre }}
+                               {{ annonce.email }}
                               </p>
                             </div>
                             <div class="info"> 

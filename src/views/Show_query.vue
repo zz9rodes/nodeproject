@@ -12,7 +12,7 @@
     var etat= ref()
     var status=ref()
 	const  list_Query=()=>{
-                axios.get('http://192.168.2.5:3001/list_Query', {withCredentials:true})
+                axios.get('http://localhost:3001/list_Query', {withCredentials:true})
         .then(response=>{console.log(response.data.diver) 
           if(response.data.status){
             Querys.value=response.data.message
@@ -43,7 +43,7 @@
     list_Query()
     /**authentification */
     const authentification = ()=> {
-        axios.get('http://192.168.2.5:3001/authentification',{withCredentials:true})
+        axios.get('http://localhost:3001/authentification',{withCredentials:true})
             .then(response=>{
             console.log(response)
           // message.value=response.data.message
@@ -70,7 +70,7 @@
       var result=confirm("voulez vous vraiment supprimer ?")
       if(result==true){
 
-        axios.post("http://192.168.2.5:3001/delete_query", {
+        axios.post("http://localhost:3001/delete_query", {
               id_annonce: id,
             }, { withCredentials: true })
                 .then(response => {

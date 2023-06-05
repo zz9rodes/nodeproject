@@ -112,8 +112,8 @@ app.post('/connexion',(req,res)=>{
 	var email=req.body.email;
 	var passe=req.body.passe;
 	var secret=email;
-	console.log('md5 ici'+md5(passe))
-	console.log(email)
+	// console.log('md5 ici'+md5(passe))
+	// console.log("email"+email)
 	req.getConnection((erro,conn)=>{
 		if(erro){
 			console.log(erro)
@@ -128,15 +128,20 @@ app.post('/connexion',(req,res)=>{
 						}
 						else{
 							if(resultat.length>0){
-							var id=resultat[0].id;
-							var nom=resultat[0].nom;
+								if(resultat[0].email!=email){
+									res.send({message:"incorect email or password",etat:false})
+								}
+								else{
+
+									var id=resultat[0].id;
+								var nom=resultat[0].nom;
 								console.log(data_email =resultat[0].email);
 								console.log(data_email =resultat[0].passe);
 								var data_email =resultat[0].email;
 								var data_password=resultat[0].passe;
 								   if( md5(passe)!=data_password){
 									   console.log("email ou mot de passe incorect");
-									   res.send({message:"email ou mots de passe incorect",etat:false})
+									   res.send({message:"incorect email or password",etat:false})
 								   } else {
 									console.log("bienvenu Mr  "+data_email)
 									let sess = req.session;
@@ -150,9 +155,11 @@ app.post('/connexion',(req,res)=>{
 									res.send({message:"vous etes connecte !",etat:true})
 									
 							  	   }
+								}
+								
 								} else {
 								console.log('no user');
-								res.status(422).send({message:"email ou mot de passe incorect",etat:false})
+								res.send({message:"incorect email or password",etat:false})
 								}
 							}
 					});
@@ -486,7 +493,7 @@ app.get('/list_My_annoce',auth,(req,res)=>{
 							
 							res.status(200).send({message:tableau,diver:"tout vos demandes ici ",status:true})
 						} else {
-							res.status(422).send({diver:"vous n'avez postuler pour aucune annonces",status:false})
+							res.status(422).send({diver:"vous n'avez  encore publier  aucune annonces",status:false})
 						}
 					}
 				});
@@ -629,7 +636,7 @@ app.post('/update',(req,res)=>{
         from: "rodesnzie@gmail.com",
         to:to, 
         subject: 'reset your passwork',
-		html: '<p><h2>click there to reset you password</h2> <br> <a href="http://localhost:5173/UpdatePasswork" >example.com</a>.</p>'
+		html: '<p><h2>click there to reset you password</h2> <br> <a href="http://localhost:5173/UpdatePasswork" >RESET PASSWORD.com</a>.</p>'
     }
 	console.log(to)
     smtpTransport.sendMail(mailOptions, function(error, response){

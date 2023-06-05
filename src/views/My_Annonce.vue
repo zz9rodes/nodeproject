@@ -8,7 +8,9 @@
     const route = useRouter()
     var Annonces=ref([]);
     var status=ref()
+    var statut=ref(true)
     var message=ref('')
+    var messages=ref('')
     var response_updating=ref('')
     var titre=ref('');
     var description=ref('');
@@ -18,14 +20,26 @@
 
 	const  list_Annonce=()=>{
                 axios.get('http://localhost:3001/list_My_annoce', {withCredentials:true})
-        .then(response=>{console.log(response) 
-            Annonces.value=response.data.message},
+        .then(response=>{
+          console.log(response) 
+           
+            if(response.data.status==true){
+            
+            Annonces.value=response.data.message
+            statut.value=false
+            }
+            else{
+            messages.value=response.data.diver
+            statut.value=true
+            // console.log("voici le message ici :  "+response.data.diver)
+            }          
+          },
         (err)=>
         {
             if (err.response && err.response.data) 
             {
                 console.log(err.response.data)
-                // alert("vous devez vous connecter")
+               
             }
             else {
                 console.log(err)
@@ -126,6 +140,7 @@
 	return{
     fonction,
     message,
+    messages:"desoler Vous n'avez encore Cree aucune annonce ",
     Annonces,
     Delete,
     Function,
@@ -135,6 +150,7 @@
     description,
     budget,
     Update_annonce,
+     statut
    
    
   }
@@ -144,7 +160,14 @@
 </script>
 
 <template>
-    <div class="container">
+    <div v-if="statut">
+     
+     <h3 class="error">
+       {{ messages }}  
+     </h3>
+   </div>
+
+    <div class="container" v-else>
         <h1 style="text-align: center;">your   posts </h1>
     <ul>  
       <div  id="ligne">
@@ -217,8 +240,7 @@
           <div class="ele"> {{Annonce.budget}} Fcfa</div>
           <div class="ele"> {{Annonce.date.substring(0.25)}}</div>
           <div class="ele"> 
-            <RouterLink :to="'/postuler?title=' + Annonce.titre+'&id='+Annonce.id+'&description='+Annonce.description+'&budget='+Annonce.budget+'&date='+Annonce.date+'&domaine='+Annonce.domaine" style="text-decoration: none;"> 
-                
+          <RouterLink :to="'/postuler?id='+Annonce.id+'&Kthd_eo='+Annonce.email" style="text-decoration: none;">                 
             <svg xmlns="http://www.w3.org/2000/svg" height="28" class="view" viewBox="0 -960 960 960" width="48"><path d="M480.118-330Q551-330 600.5-379.618q49.5-49.617 49.5-120.5Q650-571 600.382-620.5q-49.617-49.5-120.5-49.5Q409-670 359.5-620.382q-49.5 49.617-49.5 120.5Q310-429 359.618-379.5q49.617 49.5 120.5 49.5Zm-.353-58Q433-388 400.5-420.735q-32.5-32.736-32.5-79.5Q368-547 400.735-579.5q32.736-32.5 79.5-32.5Q527-612 559.5-579.265q32.5 32.736 32.5 79.5Q592-453 559.265-420.5q-32.736 32.5-79.5 32.5ZM480-200q-146 0-264-83T40-500q58-134 176-217t264-83q146 0 264 83t176 217q-58 134-176 217t-264 83Zm0-300Zm-.169 240Q601-260 702.5-325.5 804-391 857-500q-53-109-154.331-174.5-101.332-65.5-222.5-65.5Q359-740 257.5-674.5 156-609 102-500q54 109 155.331 174.5 101.332 65.5 222.5 65.5Z"/></svg>
             </RouterLink>
           </div>
@@ -246,6 +268,12 @@
 *{
   font-family:'Lucida Sans Regular', 'Lucida Grande', Geneva, Verdana;
 
+}
+.error{
+  text-align: center;
+  font-size: 30px;
+  color: rgb(0, 0, 0);
+  margin-top: 150px;
 }
 .container{
   
@@ -309,11 +337,12 @@ label{
 
 
 .form {
-	display: flex;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+	font-weight: normal;
+  display: flex;
 	background-color: #fff;
 	display: flex;
 	flex-direction:row ;
-	/* padding: 1rem; */
   width: 90%;
 	box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 
@@ -327,7 +356,7 @@ label{
 .form-title  {
   font-size: 1.25rem;
   line-height: 1.75rem;
-  font-weight: 600;
+  /* font-weight: 600; */
   text-align: center;
   /* margin-bottom: 20px; */
   color: #000;
@@ -347,30 +376,19 @@ label{
 .input-container input, .form button {
   outline: none;
   border: 1.3px solid #e6e8ee;
-  margin: 8px 0;
+  margin: 4px 0;
 }
 
 .input-container input {
   background-color: #fff;
   padding: 1rem;
-  padding-right: 3rem;
-  font-size: 22px;
-  line-height: 1.25rem;
+  font-size: 18px;
   width: 80%;
   border-radius: 0.5rem;
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 }
 
-.input-container span {
-  display: grid;
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  padding-left: 1rem;
-  padding-right: 1rem;
-  place-content: center;
-}
+
 
 .input-container span svg {
   color: #9CA3AF;
@@ -396,7 +414,8 @@ dialog{
   padding-left: 1.25rem;
   padding-right: 1.25rem;
   background-color: #0db33f;
-  color: #ffffff;
+  margin-left: 150px;
+  color: #e9e3e3;
   font-size: 0.875rem;
   line-height: 1.25rem;
   font-weight: 500;
@@ -421,10 +440,11 @@ dialog{
   border-radius: 0.5rem;
   text-transform: uppercase;
   cursor: pointer;
+  margin-left: 80px;
 }
 
 #description{
-	min-height: 100px;
+	min-height: 70px;
 }
 .ferme{
 	margin-left: 80%;

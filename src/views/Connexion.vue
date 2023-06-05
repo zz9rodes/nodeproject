@@ -35,9 +35,9 @@ import { useRouter, useRoute } from 'vue-router'
                     router.push({ name: "list_annonce" });
                 }
                 else{
-                  message_conn.value=response.data.message;
+                  ErroMessage()
                 }
-            },
+            },   
             (err) => console.log(err.response.data)
             );
         }
@@ -69,6 +69,22 @@ import { useRouter, useRoute } from 'vue-router'
           look.value=true;
           message.value='';
         }
+        const hiddenERROR=()=>{
+        var x = document.getElementById("EROR_MESSAGE_BOX");
+          	x.close();
+        } 
+        const showERROR=()=>{
+          var x = document.getElementById("EROR_MESSAGE_BOX");
+          x.showModal();
+        }
+      const ErroMessage=()=>{
+       console.log("la function")
+        setTimeout(showERROR, "0000")
+       
+        setTimeout(hiddenERROR, "2000")
+        email.value=""
+        password.value=""
+      }
         return {
             voire,
             cacher,
@@ -77,7 +93,7 @@ import { useRouter, useRoute } from 'vue-router'
             password,
             message,
             message_verif,
-            message_conn,
+            message_conn:"incoret email or password  ! please try againt",
             Se_Connecter,
             updatePasswork,
             params,
@@ -90,10 +106,13 @@ import { useRouter, useRoute } from 'vue-router'
 </script>
 
 <template>
+
     <div>
+      <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
     <form class="form"  v-if="look" @submit="Se_Connecter"> 
      
-      <div class="eror">{{ message_conn }}</div>  
+      <div class="eror"> </div>  
        <p class="form-title">Login</p>
         <div class="input-container">
           <input placeholder="Enter email" type="email" v-model="email" required>
@@ -132,6 +151,24 @@ import { useRouter, useRoute } from 'vue-router'
       <a to="/connexion" style="font-size: 19px; text-decoration: none;" @click="cacher">Se conneter</a>
       </p>
     </form>
+    <dialog id="EROR_MESSAGE_BOX" style="outline: none; border: none; border-radius: 5px;">
+      <div class="card"> 
+  
+        <div class="header"> 
+          
+          <div class="Fail dismiss">
+            <span class="material-icons">
+              close
+              </span>
+          </div>
+            
+          <div>
+            {{ message_conn }} 
+          </div>
+              
+          </div> 
+      </div>
+    </dialog>
 
     </div>
 </template>
@@ -143,13 +180,13 @@ import { useRouter, useRoute } from 'vue-router'
   font-family:'Lucida Sans Regular', 'Lucida Grande', Geneva, Verdana;
 }
 .form {
-margin-left: 50px;
+/* margin-left: 50px; */
 background-color: #fff;
 display: block;
 padding: 1rem;
 max-width: 450px;
 margin-bottom: 80x;
-margin-left: 50px;
+margin-left: 100px;
 border-radius: 0.5rem;
 border: solid rgb(230, 230, 221) 1px;
 box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
@@ -239,8 +276,11 @@ text-decoration: underline;
   /* animation: blink 3s linear infinite; */
 }
 .eror{
-  color: rgb(52, 192, 64);
+  color: rgb(211, 25, 25);
   font-size: 24px;
+}
+.eror ,.valid{
+  animation: blink 3s linear infinite;
 }
 @keyframes blink {
   0% {
@@ -261,5 +301,105 @@ text-decoration: underline;
   100% {
     opacity: 1;
   }
+}
+</style>
+<style scoped>
+.card {
+overflow: hidden;
+position: relative;
+text-align: left;
+border-radius: 0.5rem;
+max-width: 290px;
+box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+background-color: #fff;
+width: 400px;
+}
+.EROR_MESSAGE_BOX{
+width: 300px;
+}
+
+
+.dismiss:hover {
+background-color: #ee0d0d;
+border: 2px solid #ee0d0d;
+color: #fff;
+}
+
+.header {
+padding: 1.25rem 1rem 1rem 1rem;
+}
+
+
+.Done , .Fail {
+display: flex;
+margin-left: auto;
+margin-right: auto;
+background-color: #e2feee;
+flex-shrink: 0;
+justify-content: center;
+align-items: center;
+width: 3rem;
+height: 3rem;
+border-radius: 9999px;
+animation: animate .6s linear alternate-reverse infinite;
+transition: .6s ease;
+}
+.Fail{
+background-color: #ee0d0d;}
+
+.Done svg {
+color: #066137;
+width: 2rem;
+height: 2rem;
+}
+
+.content {
+margin-top: 0.75rem;
+text-align: center;
+}
+
+.title {
+color: #066e29;
+font-size: 1rem;
+font-weight: 600;
+line-height: 1.5rem;
+}
+
+.message {
+margin-top: 0.5rem;
+color: #595b5f;
+font-size: 0.875rem;
+line-height: 1.25rem;
+}
+
+.actions {
+margin: 0.75rem 1rem;
+}
+
+.history {
+display: inline-flex;
+padding: 0.5rem 1rem;
+background-color: #1aa06d;
+color: #ffffff;
+font-size: 1rem;
+line-height: 1.5rem;
+font-weight: 500;
+justify-content: center;
+width: 100%;
+border-radius: 0.375rem;
+border: none;
+cursor: pointer;
+box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+
+@keyframes animate {
+from {
+transform: scale(1);
+}
+
+to {
+transform: scale(1.09);
+}
 }
 </style>

@@ -123,7 +123,7 @@ header li{
   display: flex;
   flex-direction: row;
   margin-left: 200px;
-  padding: 100px;
+  
     
 }
 li:hover,li:active{

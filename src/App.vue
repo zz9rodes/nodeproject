@@ -4,6 +4,7 @@ import HelloWorld from './components/HelloWorld.vue'
 import NavBar from './views/Nav-bar.vue'
 import Home from './views/HomeView.vue'
 import Footer from './views/Footer.vue'
+
 import { ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 

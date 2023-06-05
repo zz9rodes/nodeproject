@@ -40,7 +40,7 @@ export default{
     }
     const send_commentaire=(ev)=>{
         // ev.preventDefault()
-        axios.post('http://localhost:3001/commentaire',{
+        axios.post('https://55e0-154-72-162-124.ngrok-free.app/commentaire',{
             id_annonce:Id,
             description:description.value,
         },{withCredentials:true}
@@ -52,7 +52,7 @@ export default{
 
     const Postuler=(ev)=>{
         ev.preventDefault()
-        axios.post('http://localhost:3001/postuler',{
+        axios.post('https://55e0-154-72-162-124.ngrok-free.app/postuler',{
             id_annonce:Id,
             email_auteur:email_auteur,
         },{withCredentials:true}
@@ -61,7 +61,7 @@ export default{
     }
 
     const list_commentaires = ()=> {
-        axios.post('http://localhost:3001/List_commentaire',{
+        axios.post('https://55e0-154-72-162-124.ngrok-free.app/List_commentaire',{
           id_annonce:Id,
         },{withCredentials:true})
             .then(response=>{
@@ -95,7 +95,7 @@ export default{
 
    const est_liker = async ()=> {
 
-      return await axios.post('http://localhost:3001/est_liker',{
+      return await axios.post('https://55e0-154-72-162-124.ngrok-free.app/est_liker',{
           id_annonce:Id,
         },{withCredentials:true})
             .then(response=>{
@@ -131,7 +131,7 @@ export default{
       var result= await est_liker()
       
       if(result.value){
-        axios.post('http://localhost:3001/Delete_like',{
+        axios.post('https://55e0-154-72-162-124.ngrok-free.app/Delete_like',{
           id_annonce:Id,       
       },{withCredentials:true}
         ).then(response=>{
@@ -145,7 +145,7 @@ export default{
         })
       }
       else{
-        axios.post('http://localhost:3001/liker',{
+        axios.post('https://55e0-154-72-162-124.ngrok-free.app/liker',{
           id_annonce:Id,       
       },{withCredentials:true}
         ).then(response=>{
@@ -161,7 +161,7 @@ export default{
    } 
    const get_User_profil=()=>{
     console.log(route.query.Kthd_eo) 
-    axios.post('http://localhost:3001/get_User_profil',{
+    axios.post('https://55e0-154-72-162-124.ngrok-free.app/get_User_profil',{
       email:route.query.Kthd_eo
      
     },{withCredentials:true}
@@ -174,7 +174,7 @@ export default{
     })
    }
    const get_nbr_Annonce=()=>{
-    axios.post('http://localhost:3001/get_nbr_Annonce',{
+    axios.post('https://55e0-154-72-162-124.ngrok-free.app/get_nbr_Annonce',{
       email:route.query.Kthd_eo
     },{withCredentials:true}
     ).then(response=>{
@@ -186,7 +186,7 @@ export default{
    }
 
    const authentification = ()=> {
-        axios.get('http://localhost:3001/authentification',{withCredentials:true})
+        axios.get('https://55e0-154-72-162-124.ngrok-free.app/authentification',{withCredentials:true})
             .then(response=>{
             // console.log(response)
           // message.value=response.data.message
@@ -210,7 +210,7 @@ export default{
 
 
   const get_info_annonce=()=>{
-    axios.post('http://localhost:3001/get_info_annonce',{
+    axios.post('https://55e0-154-72-162-124.ngrok-free.app/get_info_annonce',{
       id_Annonce:Id
     },{withCredentials:true}
     ).then(response=>{

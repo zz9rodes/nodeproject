@@ -19,7 +19,7 @@
     var id=ref()
 
 	const  list_Annonce=()=>{
-                axios.get('http://localhost:3001/list_My_annoce', {withCredentials:true})
+                axios.get('https://55e0-154-72-162-124.ngrok-free.app/list_My_annoce', {withCredentials:true})
         .then(response=>{
           console.log(response) 
            
@@ -49,7 +49,7 @@
 
     }  
     const authentification = ()=> {
-        axios.get('http://localhost:3001/authentification',{withCredentials:true})
+        axios.get('https://55e0-154-72-162-124.ngrok-free.app/authentification',{withCredentials:true})
             .then(response=>{
             console.log(response)
           // message.value=response.data.message
@@ -87,7 +87,7 @@
       var result=confirm("voulez vous vraiment supprimer ?")
       if(result==true){
 
-        axios.post("http://localhost:3001/delete_annonce", {
+        axios.post("https://55e0-154-72-162-124.ngrok-free.app/delete_annonce", {
               id_annonce: id,
             }, { withCredentials: true })
                 .then(response => {
@@ -116,7 +116,7 @@
    const Update_annonce=(ev)=>{ 
        ev.preventDefault()
       
-       axios.post('http://localhost:3001/Update_Annonce',{
+       axios.post('https://55e0-154-72-162-124.ngrok-free.app/Update_Annonce',{
         id_annonce:id.value,
         titre_annonce:titre.value,
         domaine_annonce:domaine.value,

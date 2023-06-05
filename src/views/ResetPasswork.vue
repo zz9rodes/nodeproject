@@ -12,7 +12,7 @@ import { ref } from 'vue'
           var etat =ref('')
         const  ResetPasswork=(ev)=>{
                 ev.preventDefault()
-                axios.post('http://192.168.2.5:3001/reinisalise_password',
+                axios.post('https://55e0-154-72-162-124.ngrok-free.app/reinisalise_password',
           {
             email:email.value,
             passe:password.value,

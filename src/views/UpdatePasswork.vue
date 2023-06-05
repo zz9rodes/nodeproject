@@ -12,7 +12,7 @@ import { ref } from 'vue'
 
         const updatePasswork =(ev)=>{
                 ev.preventDefault()
-                axios.post('http://localhost:3001/update',
+                axios.post('https://55e0-154-72-162-124.ngrok-free.app/update',
           {
             email:email.value,
           }, {withCredentials:true}

@@ -45,7 +45,7 @@ console.log("le serveur est cree")
 app.use(express.json())
 app.use(cors({
 	credentials:true,
-	origin:'http://localhost:5173',
+	origin:'https://nodeproject-orcin.vercel.app/',
 	methods: ['GET',"POST","PUT"]
 }));
 /* route  pour l'inscription */
@@ -636,7 +636,7 @@ app.post('/update',(req,res)=>{
         from: "rodesnzie@gmail.com",
         to:to, 
         subject: 'reset your passwork',
-		html: '<p><h2>click there to reset you password</h2> <br> <a href="http://localhost:5173/UpdatePasswork" >RESET PASSWORD.com</a>.</p>'
+		html: '<p><h2>click there to reset you password</h2> <br> <a href="https://55e0-154-72-162-124.ngrok-free.app/UpdatePasswork" >RESET PASSWORD.com</a>.</p>'
     }
 	console.log(to)
     smtpTransport.sendMail(mailOptions, function(error, response){

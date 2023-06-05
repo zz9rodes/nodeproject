@@ -29,7 +29,7 @@ export default {
   methods:{
     valid(ev){
       ev.preventDefault()
-      axios.post('http://localhost:3001/inscription',
+      axios.post('https://55e0-154-72-162-124.ngrok-free.app/inscription',
         {email:this.email ,
           nom:this.nom,
           passe:this.password,

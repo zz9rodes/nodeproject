@@ -23,7 +23,7 @@ import { useRouter, useRoute } from 'vue-router'
          /**fonction pour envoyer la connexion */
         const Se_Connecter = (ev) => {
             ev.preventDefault();
-            axios.post("http://localhost:3001/connexion", {
+            axios.post("https://55e0-154-72-162-124.ngrok-free.app/connexion", {
                 email: email.value,
                 passe: password.value,
             }, { withCredentials: true })
@@ -44,7 +44,7 @@ import { useRouter, useRoute } from 'vue-router'
         /**fonction pour envoyer l'email de verification */
           const updatePasswork =(ev)=>{
                 ev.preventDefault()
-                axios.post('http://localhost:3001/update',
+                axios.post('https://55e0-154-72-162-124.ngrok-free.app/update',
           {
             email:email.value,
           }, {withCredentials:true}

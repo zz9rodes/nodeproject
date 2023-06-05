@@ -33,7 +33,7 @@ export default{
     }
     const send_commentaire=(ev)=>{
         // ev.preventDefault()
-        axios.post('http://localhost:3001/commentaire',{
+        axios.post('https://55e0-154-72-162-124.ngrok-free.app/commentaire',{
             id_annonce:Id,
             description:description.value,
         },{withCredentials:true}
@@ -45,7 +45,7 @@ export default{
 
     const Postuler=(ev)=>{
         ev.preventDefault()
-        axios.post('http://localhost:3001/postuler',{
+        axios.post('https://55e0-154-72-162-124.ngrok-free.app/postuler',{
             id_annonce:Id
         },{withCredentials:true}
         ) .then(response=>{console.log(response) 
@@ -53,7 +53,7 @@ export default{
     }
 
     const list_commentaires = ()=> {
-        axios.post('http://localhost:3001/List_commentaire',{
+        axios.post('https://55e0-154-72-162-124.ngrok-free.app/List_commentaire',{
           id_annonce:Id,
         },{withCredentials:true})
             .then(response=>{

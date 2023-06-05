@@ -20,7 +20,7 @@
     var domaine=route.query.domaine;
     var date=route.query.date
 	const  list_Proposition =()=>{
-                axios.post('http://localhost:3001/list_proposition',{
+                axios.post('https://55e0-154-72-162-124.ngrok-free.app/list_proposition',{
                     id:Id
                 }, {withCredentials:true})
         .then(response=>{
@@ -53,7 +53,7 @@
 
     const sendEmail =(ev)=>{
                 ev.preventDefault()
-                axios.post('http:// 192.168.2.5:3001/update',
+                axios.post('https://55e0-154-72-162-124.ngrok-free.app/update',
           {
             email:email.value,
           }, {withCredentials:true}
@@ -74,7 +74,7 @@
         }
 	
         const authentification = ()=> {
-        axios.get('http:// 192.168.2.5:3001/authentification',{withCredentials:true})
+        axios.get('https://55e0-154-72-162-124.ngrok-free.app/authentification',{withCredentials:true})
             .then(response=>{
             console.log(response)
           messages.value=response.data.message
